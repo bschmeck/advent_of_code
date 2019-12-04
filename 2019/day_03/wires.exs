@@ -39,7 +39,7 @@ defmodule Day03.Wires do
 end
 
 defmodule Main do
-  def run do
+  def part1 do
     "input.txt"
     |> File.stream!([], :line)
     |> Enum.map(&Day03.Path.parse/1)
@@ -49,6 +49,35 @@ defmodule Main do
     |> Enum.map(&(Day03.Point.distance(&1, Day03.Point.origin)))
     |> Enum.min
     |> IO.inspect
+  end
+
+  def run do
+    paths = "input.txt"
+    |> File.stream!([], :line)
+    |> Enum.map(&Day03.Path.parse/1)
+    |> Enum.map(&Day03.Wires.points_for/1)
+    |> Enum.map(&Enum.reverse/1)
+
+    steps = paths |> Enum.map(&count_steps/1)
+
+    paths
+    |> Enum.map(&MapSet.new/1)
+    |> Enum.reduce(fn(a, b) -> MapSet.intersection(a, b) end)
+    |> Enum.map(&(steps_for(&1, steps)))
+    |> Enum.min
+    |> IO.inspect
+  end
+
+  def count_steps(path), do: count_steps(path, 1, %{})
+  defp count_steps([], _count, counts), do: counts
+  defp count_steps([point | rest], count, counts) do
+    count_steps(rest, count + 1, Map.put_new(counts, point, count))
+  end
+
+  def steps_for(point, step_counts) do
+    step_counts
+    |> Enum.map(&(Map.get(&1, point)))
+    |> Enum.reduce(&Kernel.+/2)
   end
 end
 
