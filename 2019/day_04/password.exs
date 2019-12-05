@@ -1,18 +1,18 @@
 defmodule Day04.Password do
   def possible?(p) do
-    [n | rest] = p |> Integer.to_charlist
+    l = p |> Integer.to_charlist
 
-    has_adjacent_same_digits?(rest, n) &&
-    never_decreases?(rest, n)
+    has_adjacent_same_digits?(l) &&
+    never_decreases?(l)
   end
 
-  def has_adjacent_same_digits?([], _), do: false
-  def has_adjacent_same_digits?([n | _rest], n), do: true
-  def has_adjacent_same_digits?([n | rest], _), do: has_adjacent_same_digits?(rest, n)
+  def has_adjacent_same_digits?([_ | []]), do: false
+  def has_adjacent_same_digits?([n | [n | _rest]]), do: true
+  def has_adjacent_same_digits?([_n | [x | rest]]), do: has_adjacent_same_digits?([x | rest])
 
-  def never_decreases?([], _), do: true
-  def never_decreases?([a | _rest], b) when a < b, do: false
-  def never_decreases?([a | rest], _), do: never_decreases?(rest, a)
+  def never_decreases?([_ | []]), do: true
+  def never_decreases?([a | [b | _rest]]) when a > b, do: false
+  def never_decreases?([_a | [b | rest]]), do: never_decreases?([b | rest])
 end
 
 IO.inspect Day04.Password.possible?(111111)
