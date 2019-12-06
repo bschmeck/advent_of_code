@@ -10,6 +10,10 @@ defmodule IntcodeTest do
     |> Intcode.read(address)
   end
 
+  def check_output(instructions) do
+    capture_io(fn -> instructions |> Intcode.build |> Intcode.execute end)
+  end
+
   test "it can execute the example programs" do
     assert check("1,0,0,0,99", 0) == 2
     assert check("2,3,0,3,99", 3) == 6
@@ -22,12 +26,12 @@ defmodule IntcodeTest do
   end
 
   test "it can output values" do
-    assert capture_io(fn -> "4,2,99" |> Intcode.build |> Intcode.execute end) == "99\n"
+    assert check_output("4,2,99") == "99\n"
   end
 
   test "it understands immediate mode" do
     assert check("1002,5,3,5,99,32", 5) == 96
-    assert capture_io(fn -> "104,2,99" |> Intcode.build |> Intcode.execute end) == "2\n"
+    assert check_output("104,2,99") == "2\n"
   end
 
   test "it handles negative numbers" do
