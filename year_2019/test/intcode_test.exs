@@ -37,4 +37,25 @@ defmodule IntcodeTest do
   test "it handles negative numbers" do
     assert check("1101,100,-1,4,0", 4) == 99
   end
+
+  test "it has a working equality operator" do
+    assert check_output("3,9,8,9,10,9,4,9,99,-1,8") == "0\n" # When input != 8, position mode
+    assert check_output("3,9,8,9,10,9,4,9,99,-1,8") == "1\n" # When input == 8, position mode
+    assert check_output("3,3,1108,-1,8,3,4,3,99") == "0\n"  # When input != 8, immediate mode
+    assert check_output("3,3,1108,-1,8,3,4,3,99") == "1\n"  # When input == 8, immediate mode
+  end
+
+  test "it has a working less than operator" do
+    assert check_output("3,9,7,9,10,9,4,9,99,-1,8") == "1\n" # When input < 8, position mode
+    assert check_output("3,9,7,9,10,9,4,9,99,-1,8") == "0\n" # When input < 8, position mode
+    assert check_output("3,3,1107,-1,8,3,4,3,99") == "1\n" # When input < 8, immediate mode
+    assert check_output("3,3,1107,-1,8,3,4,3,99") == "0\n" # When input < 8, immediate mode
+  end
+
+  test "it has working jump operators" do
+    assert check_output("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9") == "0\n" # When input is 0, position mode
+    assert check_output("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9") == "1\n" # When input is non-zero, position mode
+    assert check_output("3,3,1105,-1,9,1101,0,0,12,4,12,99,1") == "0\n" # When input is 0, immediate mode
+    assert check_output("3,3,1105,-1,9,1101,0,0,12,4,12,99,1") == "1\n" # When input is non-zero, immediate mode
+  end
 end
