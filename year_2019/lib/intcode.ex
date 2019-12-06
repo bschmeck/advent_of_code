@@ -16,6 +16,8 @@ defmodule Intcode do
     case Map.get(opcodes, i) do
       1 -> opcodes |> op(i, &Kernel.+/2) |> execute(i + 4)
       2 -> opcodes |> op(i, &Kernel.*/2) |> execute(i + 4)
+      3 -> opcodes |> write_input(i) |> execute(i + 2)
+      4 -> opcodes |> output(i) |> execute(i + 2)
       99 -> opcodes
     end
   end
@@ -27,6 +29,19 @@ defmodule Intcode do
     val_a = Map.get(opcodes, a)
     val_b = Map.get(opcodes, b)
     Map.put(opcodes, c, f.(val_a, val_b))
+  end
+
+  defp write_input(opcodes, i) do
+    addr = read(opcodes, i + 1)
+    write(opcodes, addr, input())
+  end
+
+  defp input, do: 1
+
+  defp output(opcodes, i) do
+    addr = read(opcodes, i + 1)
+    IO.puts read(opcodes, addr)
+    opcodes
   end
 
   def read(machine, addr), do: Map.get(machine, addr)
