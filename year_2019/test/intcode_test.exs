@@ -24,4 +24,8 @@ defmodule IntcodeTest do
   test "it can output values" do
     assert capture_io(fn -> "4,2,99" |> Intcode.build |> Intcode.execute end) == "99\n"
   end
+
+  test "it understands immediate mode" do
+    assert check("1002,5,3,5,99,32", 5) == 96
+  end
 end

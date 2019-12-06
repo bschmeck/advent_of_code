@@ -13,7 +13,9 @@ defmodule Intcode do
 
   def execute(opcodes), do: execute(opcodes, 0)
   defp execute(opcodes, i) do
-    case Map.get(opcodes, i) do
+    {_modes, opcode} = opcodes |> read(i) |> divrem(100)
+
+    case opcode do
       1 -> opcodes |> op(i, &Kernel.+/2) |> execute(i + 4)
       2 -> opcodes |> op(i, &Kernel.*/2) |> execute(i + 4)
       3 -> opcodes |> write_input(i) |> execute(i + 2)
@@ -51,4 +53,6 @@ defmodule Intcode do
   def assign_offsets([op | rest], i, map) do
     assign_offsets(rest, i + 1, write(map, i, op))
   end
+
+  defp divrem(a, b), do: {div(a, b), rem(a, b)}
 end
