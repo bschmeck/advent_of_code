@@ -30,9 +30,10 @@ defmodule Intcode do
   end
 
   def read(machine, addr), do: Map.get(machine, addr)
+  def write(machine, addr, value), do: Map.put(machine, addr, value)
 
   def assign_offsets([], _, map), do: map
   def assign_offsets([op | rest], i, map) do
-    assign_offsets(rest, i + 1, Map.put(map, i, op))
+    assign_offsets(rest, i + 1, write(map, i, op))
   end
 end
