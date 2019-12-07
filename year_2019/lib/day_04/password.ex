@@ -29,21 +29,13 @@ defmodule Day04.Password do
 
   def never_decreases?([a, b, c, d, e, f]) when a > b or b > c or c > d or d > e or e > f, do: false
   def never_decreases?(_), do: true
-end
 
-IO.inspect Day04.Password.possible_part1?(111111)
-IO.inspect Day04.Password.possible_part1?(223450)
-IO.inspect Day04.Password.possible_part1?(123789)
-(for x <- 271973..785961, do: x)
-|> Enum.count(&Day04.Password.possible_part1?/1)
-|> IO.inspect
-IO.puts "==="
-IO.inspect Day04.Password.possible?(111111)
-IO.inspect Day04.Password.possible?(223456)
-IO.inspect Day04.Password.possible?(123789)
-IO.inspect Day04.Password.possible?(112233)
-IO.inspect Day04.Password.possible?(123444)
-IO.inspect Day04.Password.possible?(111122)
-(for x <- 271973..785961, do: x)
-|> Enum.count(&Day04.Password.possible?/1)
-|> IO.inspect
+  def run(:part1), do: count_with(&Day04.Password.possible_part1?/1)
+  def run(:part2), do: count_with(&Day04.Password.possible?/1)
+
+  def count_with(f) do
+    (for x <- 271973..785961, do: x)
+    |> Enum.count(f)
+    |> IO.puts
+  end
+end
