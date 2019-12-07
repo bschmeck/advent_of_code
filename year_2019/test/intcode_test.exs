@@ -10,8 +10,8 @@ defmodule IntcodeTest do
     |> Intcode.read(address)
   end
 
-  def check_output(instructions) do
-    capture_io(fn -> instructions |> Intcode.build |> Intcode.execute end)
+  def check_output(instructions, input \\ 1) do
+    capture_io(fn -> instructions |> Intcode.build |> Intcode.execute(input) end)
   end
 
   test "it can execute the example programs" do
@@ -53,9 +53,9 @@ defmodule IntcodeTest do
   end
 
   test "it has working jump operators" do
-    assert check_output("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9") == "0\n" # When input is 0, position mode
     assert check_output("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9") == "1\n" # When input is non-zero, position mode
-    assert check_output("3,3,1105,-1,9,1101,0,0,12,4,12,99,1") == "0\n" # When input is 0, immediate mode
     assert check_output("3,3,1105,-1,9,1101,0,0,12,4,12,99,1") == "1\n" # When input is non-zero, immediate mode
+    assert check_output("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", 0) == "0\n" # When input is 0, position mode
+    assert check_output("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", 0) == "0\n" # When input is 0, immediate mode
   end
 end

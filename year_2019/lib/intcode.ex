@@ -11,16 +11,36 @@ defmodule Intcode do
     |> Enum.map(&(Integer.parse(&1) |> elem(0)))
   end
 
-  def execute(machine), do: execute(machine, 0)
-  defp execute(machine, sp) do
+  def execute(machine, input \\ 1), do: execute(machine, 0, input)
+  defp execute(machine, sp, input) do
     opcode = machine |> read(sp) |> rem(100)
 
     case opcode do
-      1 -> machine |> op(sp, &Kernel.+/2) |> execute(sp + 4)
-      2 -> machine |> op(sp, &Kernel.*/2) |> execute(sp + 4)
-      3 -> machine |> write_input(sp) |> execute(sp + 2)
-      4 -> machine |> output(sp) |> execute(sp + 2)
+      1 -> machine |> op(sp, &Kernel.+/2) |> execute(sp + 4, input)
+      2 -> machine |> op(sp, &Kernel.*/2) |> execute(sp + 4, input)
+      3 -> machine |> write_input(sp, input) |> execute(sp + 2, input)
+      4 -> machine |> output(sp) |> execute(sp + 2, input)
+      5 ->
+        sp = machine |> jump_if_true(sp)
+        execute(machine, sp, input)
+      6 ->
+        sp = machine |> jump_if_false(sp)
+        execute(machine, sp, input)
       99 -> machine
+    end
+  end
+
+  defp jump_if_true(machine, sp) do
+    case args(machine, sp, 2) do
+      [v, addr] when v != 0 -> addr
+      _ -> sp + 3
+    end
+  end
+
+  defp jump_if_false(machine, sp) do
+    case args(machine, sp, 2) do
+      [0, addr] -> addr
+      _ -> sp + 3
     end
   end
 
@@ -45,12 +65,10 @@ defmodule Intcode do
     args_from_modes(machine, sp + 1, div(modes, 10), n - 1, [arg | args])
   end
 
-  defp write_input(machine, sp) do
+  defp write_input(machine, sp, input) do
     addr = read(machine, sp + 1)
-    write(machine, addr, input())
+    write(machine, addr, input)
   end
-
-  defp input, do: 1
 
   defp output(machine, sp) do
     [arg] = args(machine, sp, 1)
