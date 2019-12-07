@@ -26,7 +26,25 @@ defmodule Intcode do
       6 ->
         sp = machine |> jump_if_false(sp)
         execute(machine, sp, input)
+      7 -> machine |> less_than(sp) |> execute(sp + 4, input)
+      8 -> machine |> equal_to(sp) |> execute(sp + 4, input)
       99 -> machine
+    end
+  end
+
+  defp equal_to(machine, sp) do
+    addr = read(machine, sp + 3)
+    case args(machine, sp, 2) do
+      [a, a] -> write(machine, addr, 1)
+      _ -> write(machine, addr, 0)
+    end
+  end
+
+  defp less_than(machine, sp) do
+    addr = read(machine, sp + 3)
+    case args(machine, sp, 2) do
+      [a, b] when a < b -> write(machine, addr, 1)
+      _ -> write(machine, addr, 0)
     end
   end
 
