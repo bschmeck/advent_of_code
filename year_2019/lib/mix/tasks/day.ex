@@ -9,4 +9,5 @@ defmodule Mix.Tasks.Day do
   def run(["4.2"]), do: Day04.Password.run(:part2)
   def run(["5.1"]), do: Day05.Diagnostics.run(1)
   def run(["5.2"]), do: Day05.Diagnostics.run(5)
+  def run(["6.1"]), do: Day06.Orbits.count_input()
 end
