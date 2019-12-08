@@ -1,9 +1,4 @@
 defmodule Intcode do
-  def from_file(f) do
-    {:ok, raw} = File.read(f)
-    build(raw)
-  end
-
   def build(s) do
     s
     |> parse_machine

@@ -60,8 +60,7 @@ defmodule Day03.Wires do
   end
 
   defp points do
-    "#{__DIR__}/input.txt"
-    |> File.stream!([], :line)
+    InputFile.contents_of(3, :stream)
     |> Enum.map(&Day03.Path.parse/1)
     |> Enum.map(&Day03.Wires.points_for/1)
   end

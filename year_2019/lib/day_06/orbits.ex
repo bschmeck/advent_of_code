@@ -40,8 +40,7 @@ defmodule Day06.Orbits do
   end
 
   def count_input() do
-    "#{__DIR__}/input.txt"
-    |> File.stream!([], :line)
+    InputFile.contents_of(6, :stream)
     |> Enum.map(&String.trim/1)
     |> Enum.into([])
     |> parse
@@ -50,8 +49,7 @@ defmodule Day06.Orbits do
   end
 
   def run(:part2) do
-    "#{__DIR__}/input.txt"
-    |> File.stream!([], :line)
+    InputFile.contents_of(6, :stream)
     |> Enum.map(&String.trim/1)
     |> Enum.into([])
     |> parse

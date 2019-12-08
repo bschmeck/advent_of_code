@@ -12,7 +12,7 @@ defmodule Day01.Fuel do
   end
 
   def run(:required) do
-    File.stream!("#{__DIR__}/input.txt", [], :line)
+    InputFile.contents_of(1, :stream)
     |> Enum.map(&(Integer.parse(&1)))
     |> Enum.map(fn {i, _} -> i end)
     |> Enum.map(&(Day01.Fuel.required_for(&1)))
@@ -21,7 +21,7 @@ defmodule Day01.Fuel do
   end
 
   def run(:total) do
-    File.stream!("#{__DIR__}/input.txt", [], :line)
+    InputFile.contents_of(1, :stream)
     |> Enum.map(&(Integer.parse(&1)))
     |> Enum.map(fn {i, _} -> i end)
     |> Enum.map(&(Day01.Fuel.total_for(&1)))

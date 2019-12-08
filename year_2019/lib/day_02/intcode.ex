@@ -1,12 +1,13 @@
 defmodule Day02.Intcode do
   def run(:part1) do
-    Intcode.from_file("#{__DIR__}/input.txt")
+    InputFile.contents_of(2)
+    |> Intcode.build
     |> compute(12, 2)
     |> IO.puts
   end
 
   def run(:part2) do
-    machine = Intcode.from_file("#{__DIR__}/input.txt")
+    machine = InputFile.contents_of(2) |> Intcode.build
     target = 19690720
     combos = for x <- 0..99, y <- 0..99, into: [], do: {x, y}
 
