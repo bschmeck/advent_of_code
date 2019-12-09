@@ -11,4 +11,5 @@ defmodule Mix.Tasks.Day do
   def run(["5.2"]), do: Day05.Diagnostics.run(5)
   def run(["6.1"]), do: Day06.Orbits.count_input()
   def run(["6.2"]), do: Day06.Orbits.run(:part2)
+  def run(["7.1"]), do: Day07.Amplifier.max_signal |> IO.puts
 end
