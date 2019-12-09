@@ -11,14 +11,14 @@ defmodule Intcode do
     |> Enum.map(&(Integer.parse(&1) |> elem(0)))
   end
 
-  def execute(machine, input \\ 1), do: execute(machine, 0, input)
+  def execute(machine, input \\ [1]), do: execute(machine, 0, input)
   defp execute(machine, sp, input) do
     opcode = machine |> read(sp) |> rem(100)
 
     case opcode do
       1 -> machine |> op(sp, &Kernel.+/2) |> execute(sp + 4, input)
       2 -> machine |> op(sp, &Kernel.*/2) |> execute(sp + 4, input)
-      3 -> machine |> write_input(sp, input) |> execute(sp + 2, input)
+      3 -> machine |> write_input(sp, hd(input)) |> execute(sp + 2, tl(input))
       4 -> machine |> output(sp) |> execute(sp + 2, input)
       5 ->
         sp = machine |> jump_if_true(sp)
