@@ -11,26 +11,42 @@ defmodule Intcode do
     |> Enum.map(&(Integer.parse(&1) |> elem(0)))
   end
 
-  def execute(machine, input \\ [1]), do: execute(machine, 0, input)
-  defp execute(machine, sp, input) do
+  def execute(machine, input \\ [1])
+  def execute(machine, {:mailbox, pid}), do: execute(machine, 0, {receive_fn(), send_fn(pid)})
+  def execute(machine, input), do: execute(machine, 0, {input_fn(input), puts_fn()})
+  defp execute(machine, sp, {input_f, output_f} = io) do
     opcode = machine |> read(sp) |> rem(100)
 
     case opcode do
-      1 -> machine |> op(sp, &Kernel.+/2) |> execute(sp + 4, input)
-      2 -> machine |> op(sp, &Kernel.*/2) |> execute(sp + 4, input)
-      3 -> machine |> write_input(sp, hd(input)) |> execute(sp + 2, tl(input))
-      4 -> machine |> output(sp) |> execute(sp + 2, input)
+      1 -> machine |> op(sp, &Kernel.+/2) |> execute(sp + 4, io)
+      2 -> machine |> op(sp, &Kernel.*/2) |> execute(sp + 4, io)
+      3 ->
+        {val, input_f} = input_f.()
+        machine |> write_input(sp, val) |> execute(sp + 2, {input_f, output_f})
+      4 -> machine |> output(sp, output_f) |> execute(sp + 2, io)
       5 ->
         sp = machine |> jump_if_true(sp)
-        execute(machine, sp, input)
+        execute(machine, sp, io)
       6 ->
         sp = machine |> jump_if_false(sp)
-        execute(machine, sp, input)
-      7 -> machine |> less_than(sp) |> execute(sp + 4, input)
-      8 -> machine |> equal_to(sp) |> execute(sp + 4, input)
+        execute(machine, sp, io)
+      7 -> machine |> less_than(sp) |> execute(sp + 4, io)
+      8 -> machine |> equal_to(sp) |> execute(sp + 4, io)
       99 -> machine
     end
   end
+
+  defp input_fn(l), do: fn -> {hd(l), input_fn(tl(l))} end
+  defp receive_fn() do
+    fn ->
+      receive do
+        a -> {a, receive_fn()}
+      end
+    end
+  end
+
+  defp send_fn(pid), do: fn(v) -> send(pid, v) end
+  defp puts_fn(), do: fn(v) -> IO.puts v end
 
   defp equal_to(machine, sp) do
     addr = read(machine, sp + 3)
@@ -88,9 +104,9 @@ defmodule Intcode do
     write(machine, addr, input)
   end
 
-  defp output(machine, sp) do
+  defp output(machine, sp, f) do
     [arg] = args(machine, sp, 1)
-    IO.puts arg
+    f.(arg)
     machine
   end
 

@@ -25,6 +25,13 @@ defmodule IntcodeTest do
     assert check("3,0,99", 0) == 1
   end
 
+  test "it can handle input from a linked process" do
+    my_pid = self()
+    pid = spawn(fn -> Intcode.build("3,0,4,0,99") |> Intcode.execute({:mailbox, my_pid}) end)
+    send(pid, 123)
+    assert_receive(123)
+  end
+
   test "it can output values" do
     assert check_output("4,2,99") == "99\n"
   end
