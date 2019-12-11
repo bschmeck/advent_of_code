@@ -10,4 +10,16 @@ defmodule Day08.SpaceImageFormatTest do
     raw = "121200321004211240216221"
     assert Day08.SpaceImageFormat.checksum(raw, {3, 2}) == 6
   end
+
+  test "it collapses all layers" do
+    raw = "0222112222120000"
+    collapsed = raw |> Day08.SpaceImageFormat.layers_of({2,2}) |> Day08.SpaceImageFormat.collapse
+    assert collapsed == [0, 1, 1, 0]
+  end
+
+  test "it combines 2 layers" do
+    top = [0, 2, 2, 2]
+    next = [1, 1, 2, 2]
+    assert Day08.SpaceImageFormat.combine(next, top) == [0, 1, 2, 2]
+  end
 end

@@ -14,4 +14,5 @@ defmodule Mix.Tasks.Day do
   def run(["7.1"]), do: Day07.SignalMaximizer.run(Day07.Amplifier, [0,1,2,3,4]) |> IO.puts
   def run(["7.2"]), do: Day07.SignalMaximizer.run(Day07.LoopedAmplifier, [5,6,7,8,9]) |> IO.puts
   def run(["8.1"]), do: Day08.SpaceImageFormat.checksum({25, 6}) |> IO.puts
+  def run(["8.2"]), do: Day08.SpaceImageFormat.print({25, 6})
 end
