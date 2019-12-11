@@ -80,5 +80,13 @@ defmodule IntcodeTest do
   test "it handles relative mode" do
     raw = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99"
     assert check_output(raw) == String.replace(raw, ",", "\n")
+    raw = "1102,34915192,34915192,7,4,7,99,0"
+    assert check_output(raw) |> String.length == 16
+    raw = "104,1125899906842624,99"
+    assert check_output(raw) == "1125899906842624"
+    raw = "109,5,203,-5,99"
+    assert check(raw, 0) == 1
+    raw = "109,7,21101,1,2,3,99"
+    assert check(raw, 10) == 3
   end
 end

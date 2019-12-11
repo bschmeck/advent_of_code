@@ -24,7 +24,7 @@ defmodule Intcode do
       2 -> machine |> op(ptrs, &Kernel.*/2) |> execute({sp + 4, rb}, io)
       3 ->
         {val, input_f} = input_f.()
-        machine |> write_input(sp, val) |> execute({sp + 2, rb}, {input_f, output_f})
+        machine |> write_input(ptrs, val) |> execute({sp + 2, rb}, {input_f, output_f})
       4 -> machine |> output(ptrs, output_f) |> execute({sp + 2, rb}, io)
       5 ->
         sp = machine |> jump_if_true(ptrs)
@@ -53,16 +53,16 @@ defmodule Intcode do
   defp send_fn(pid), do: fn(v) -> send(pid, v) end
   defp puts_fn(), do: fn(v) -> IO.puts v end
 
-  defp equal_to(machine, {sp, rb}) do
-    addr = read(machine, sp + 3)
+  defp equal_to(machine, {sp, rb} = ptrs) do
+    addr = write_addr(machine, ptrs, 3)
     case args(machine, {sp, rb}, 2) do
       [a, a] -> write(machine, addr, 1)
       _ -> write(machine, addr, 0)
     end
   end
 
-  defp less_than(machine, {sp, _} = ptrs) do
-    addr = read(machine, sp + 3)
+  defp less_than(machine, ptrs) do
+    addr = write_addr(machine, ptrs, 3)
     case args(machine, ptrs, 2) do
       [a, b] when a < b -> write(machine, addr, 1)
       _ -> write(machine, addr, 0)
@@ -83,9 +83,9 @@ defmodule Intcode do
     end
   end
 
-  defp op(machine, {sp, _} = ptrs, f) do
+  defp op(machine, ptrs, f) do
     [a, b] = args(machine, ptrs, 2)
-    addr = read(machine, sp + 3)
+    addr = write_addr(machine, ptrs, 3)
     write(machine, addr, f.(a, b))
   end
 
@@ -109,8 +109,17 @@ defmodule Intcode do
     args_from_modes(machine, {sp + 1, rb}, div(modes, 10), n - 1, [arg | args])
   end
 
-  defp write_input(machine, sp, input) do
-    addr = read(machine, sp + 1)
+  defp write_addr(machine, {sp, rb}, pos) do
+    base = (:math.pow(10, pos) * 10) |> round
+    mode = machine |> read(sp) |> div(base)
+    adjust = case mode do
+               2 -> rb
+               _ -> 0
+             end
+    read(machine, sp + pos) + adjust
+  end
+  defp write_input(machine, ptrs, input) do
+    addr = write_addr(machine, ptrs, 1)
     write(machine, addr, input)
   end
 
