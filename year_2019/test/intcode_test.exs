@@ -76,4 +76,9 @@ defmodule IntcodeTest do
   test "it handles multiple inputs" do
     assert check_output("3,11,3,12,1,11,12,0,4,0,99,0,0", [1, 2]) == "3\n"
   end
+
+  test "it handles relative mode" do
+    raw = "109,1,204,-1,1001,100,1,100,1008,100,16,101,1006,101,0,99"
+    assert check_output(raw) == String.replace(raw, ",", "\n") <> "\n"
+  end
 end
