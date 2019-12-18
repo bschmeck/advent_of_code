@@ -16,40 +16,28 @@ defmodule Day10.AsteroidsTest do
     map = ".#..#\n.....\n#####\n....#\n...##" |> String.split("\n")
     counts = map |> Day10.Asteroids.parse |> Day10.Asteroids.counts
 
-    assert Map.get(counts, {1, 0}) == 7
-    assert Map.get(counts, {4, 0}) == 7
-    assert Map.get(counts, {0, 2}) == 6
-    assert Map.get(counts, {1, 2}) == 7
-    assert Map.get(counts, {2, 2}) == 7
-    assert Map.get(counts, {3, 2}) == 7
-    assert Map.get(counts, {4, 2}) == 5
-    assert Map.get(counts, {4, 3}) == 7
-    assert Map.get(counts, {3, 4}) == 8
-    assert Map.get(counts, {4, 4}) == 7
+    assert Map.get(counts, {1, 0}) |> MapSet.size == 7
+    assert Map.get(counts, {4, 0}) |> MapSet.size == 7
+    assert Map.get(counts, {0, 2}) |> MapSet.size == 6
+    assert Map.get(counts, {1, 2}) |> MapSet.size == 7
+    assert Map.get(counts, {2, 2}) |> MapSet.size == 7
+    assert Map.get(counts, {3, 2}) |> MapSet.size == 7
+    assert Map.get(counts, {4, 2}) |> MapSet.size == 5
+    assert Map.get(counts, {4, 3}) |> MapSet.size == 7
+    assert Map.get(counts, {3, 4}) |> MapSet.size == 8
+    assert Map.get(counts, {4, 4}) |> MapSet.size == 7
   end
 
   test "it finds the optimal asteroid" do
     map = ".#..#\n.....\n#####\n....#\n...##" |> String.split("\n")
-    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.max == 8
+    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.map(&(MapSet.size(&1))) |> Enum.max == 8
     map = "......#.#.\n#..#.#....\n..#######.\n.#.#.###..\n.#..#.....\n..#....#.#\n#..#....#.\n.##.#..###\n##...#..#.\n.#....####" |> String.split("\n")
-    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.max == 33
+    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.map(&(MapSet.size(&1))) |> Enum.max == 33
     map = "#.#...#.#.\n.###....#.\n.#....#...\n##.#.#.#.#\n....#.#.#.\n.##..###.#\n..#...##..\n..##....##\n......#...\n.####.###." |> String.split("\n")
-    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.max == 35
+    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.map(&(MapSet.size(&1))) |> Enum.max == 35
     map = ".#..#..###\n####.###.#\n....###.#.\n..###.##.#\n##.##.#.#.\n....###..#\n..#.#..#.#\n#..#.#.###\n.##...##.#\n.....#.#.." |> String.split("\n")
-    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.max == 41
+    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.map(&(MapSet.size(&1))) |> Enum.max == 41
     map = ".#..##.###...#######\n##.############..##.\n.#.######.########.#\n.###.#######.####.#.\n#####.##.#.##.###.##\n..#####..#.#########\n####################\n#.####....###.#.#.##\n##.#################\n#####.##.###..####..\n..######..##.#######\n####.##.####...##..#\n.#####..#.######.###\n##...#.##########...\n#.##########.#######\n.####.#.###.###.#.##\n....##.##.###..#####\n.#.#.###########.###\n#.#.#.#####.####.###\n###.##.####.##.#..##" |> String.split("\n")
-    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.max == 210
+    assert map |> Day10.Asteroids.parse |> Day10.Asteroids.counts |> Map.values |> Enum.map(&(MapSet.size(&1))) |> Enum.max == 210
   end
-
-  # test "it computes unseeable asteroid locations" do
-  #   assert Day10.Asteroids.blocked({0, 0}, {1, 3}) |> Enum.sort == Enum.sort([{2, 6}, {3, 9}])
-  #   assert Day10.Asteroids.blocked({1, 2}, {2, 4}) |> Enum.sort == Enum.sort([{2, 4}, {3, 6}])
-  #   assert Day10.Asteroids.blocked({0, 1}, {1, 1}) |> Enum.sort == Enum.sort([{2, 1}, {3, 1}])
-  #   assert Day10.Asteroids.blocked({1, 0}, {1, 1}) |> Enum.sort == Enum.sort([{1, 2}, {1, 3}])
-  # end
-
-  # test "it computes visible asteroids for a location" do
-  #   map = ".#..#\n.....\n#####\n....#\n...##"
-  #   assert Day10.Asteroids.visible_from(map, {3, 4}) == 8
-  # end
 end

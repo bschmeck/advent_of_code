@@ -6,6 +6,7 @@ defmodule Day10.Asteroids do
     |> Day10.Asteroids.parse
     |> Day10.Asteroids.counts
     |> Map.values
+    |> Enum.map(&(MapSet.size(&1)))
     |> Enum.max
     |> IO.puts
   end
@@ -23,39 +24,21 @@ defmodule Day10.Asteroids do
   defp pairs(elt, [p | rest], next, ret), do: pairs(elt, rest, next, [{elt, p} | ret])
 
   def counts(locations) do
-    loc_set = MapSet.new(locations)
-    locations |> Enum.sort |> pairs |> compute_counts(loc_set, %{})
+    locations |> Enum.sort |> pairs |> compute_counts(%{})
   end
 
-  defp compute_counts([], _locs, map), do: map
-  defp compute_counts([{a, b} | rest], locs, map) do
-    map = if blocked?(a, b, locs) do
-       map
-    else
-      map
-      |> Map.update(a, 1, &(&1 + 1))
-      |> Map.update(b, 1, &(&1 + 1))
-    end
+  defp compute_counts([], map), do: map
+  defp compute_counts([{a, b} | rest], map) do
+    a_to_b = angle_of(a, b)
+    b_to_a = angle_of(b, a)
+    map = map
+    |> Map.update(a, MapSet.new([a_to_b]), &(MapSet.put(&1, a_to_b)))
+    |> Map.update(b, MapSet.new([b_to_a]), &(MapSet.put(&1, b_to_a)))
 
-    compute_counts(rest, locs, map)
+    compute_counts(rest, map)
   end
 
-  def blocked?(a, b, locs) do
-    Enum.any?(locs, fn (loc) ->
-      a < loc
-      && loc < b
-      && func_for(a, b).(loc)
-    end)
-  end
-
-  def func_for({b_x, _b_y}, {a_x, _a_y}) when a_x == b_x do
-    fn ({x, _y}) -> x == a_x end
-  end
-  def func_for({b_x, b_y}, {a_x, a_y}) do
-    # Line from base to asteroid has slope:
-    m = (a_y - b_y) / (a_x - b_x)
-    # and intercept:
-    b = a_y - m * a_x
-    fn({x, y}) -> Float.round(m * x + b, 5) == y end
+  defp angle_of({origin_x, origin_y}, {p_x, p_y}) do
+    ElixirMath.atan2(p_x - origin_x, p_y - origin_y)
   end
 end
