@@ -18,4 +18,5 @@ defmodule Mix.Tasks.Day do
   def run(["9.1"]), do: Day09.Boost.run(1)
   def run(["9.2"]), do: Day09.Boost.run(2)
   def run(["10.1"]), do: Day10.Asteroids.run(1)
+  def run(["10.2"]), do: Day10.Asteroids.run(2)
 end

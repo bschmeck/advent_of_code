@@ -5,10 +5,18 @@ defmodule Day10.Asteroids do
     |> String.split("\n")
     |> Day10.Asteroids.parse
     |> Day10.Asteroids.counts
-    |> Map.values
-    |> Enum.map(&(MapSet.size(&1)))
+    |> Enum.map(fn({loc, set}) -> {MapSet.size(set), loc} end)
     |> Enum.max
     |> IO.puts
+  end
+
+  def run(2) do
+    10
+    |> InputFile.contents_of
+    |> String.split("\n")
+    |> Day10.Asteroids.parse
+    |> Day10.Asteroids.vaporize({22, 25}, 200)
+    |> IO.inspect
   end
 
   def parse(lines), do: parse(lines, 0, [])
@@ -25,6 +33,41 @@ defmodule Day10.Asteroids do
 
   def counts(locations) do
     locations |> Enum.sort |> pairs |> compute_counts(%{})
+  end
+
+  def vaporize(locations, origin, n) do
+    map = coord_map(origin, locations, %{})
+    angles = Map.keys(map) |> Enum.sort |> Enum.reverse
+    do_vaporize(angles, [], map, n)
+  end
+
+  defp do_vaporize([], next, map, n), do: do_vaporize(Enum.reverse(next), [], map, n)
+  defp do_vaporize([angle | rest], next, map, n) do
+    case Map.get(map, angle) do
+      [] -> do_vaporize(rest, next, map, n)
+      [{_distance, point} | asteroids] ->
+        if n == 1 do
+          point
+        else
+          map = Map.put(map, angle, asteroids)
+          do_vaporize(rest, [angle | next], map, n - 1)
+        end
+    end
+  end
+
+  def coord_map(_origin, [], map), do: map
+  def coord_map(origin, [origin | rest], map), do: coord_map(origin, rest, map)
+  def coord_map(origin, [p | rest], map) do
+    {angle, distance} = coords_of(origin, p)
+    l = [{distance, p} | Map.get(map, angle, [])] |> Enum.sort
+
+    coord_map(origin, rest, Map.put(map, angle, l))
+  end
+  def coords_of({o_x, o_y} = origin, {p_x, p_y} = point) do
+    {
+      angle_of(origin, point),
+      :math.sqrt(:math.pow(p_x - o_x, 2) + :math.pow(p_y - o_y, 2))
+    }
   end
 
   defp compute_counts([], map), do: map
