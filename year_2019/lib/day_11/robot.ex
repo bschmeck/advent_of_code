@@ -2,13 +2,32 @@ defmodule Day11.Robot do
   defstruct direction: :up, location: {0, 0}
 
   def panel_count() do
+    paint(0) |> Map.values |> Enum.count
+  end
+
+  def registration() do
+    canvas = paint(1)
+    {min_x, max_x} = canvas |> Map.keys |> Enum.map(fn({x, _y}) -> x end) |> Enum.min_max
+    {min_y, max_y} = canvas |> Map.keys |> Enum.map(fn({_x, y}) -> y end) |> Enum.min_max
+
+    for y <- max_y..min_y do
+      for x <- min_x..max_x do
+        case Map.get(canvas, {x, y}, 0) do
+          0 -> IO.write "."
+          1 -> IO.write "#"
+        end
+
+        if x == max_x, do: IO.puts("")
+      end
+    end
+  end
+
+  def paint(start_color) do
     robot = %__MODULE__{}
     machine = InputFile.contents_of(11) |> Intcode.build
     my_pid = self()
     prog = spawn(fn -> Intcode.execute(machine, {:mailbox, my_pid}) end)
-    canvas = step(robot, %{}, prog)
-
-    Map.values(canvas) |> Enum.count
+    step(robot, %{robot.location => start_color}, prog)
   end
 
   def step(robot, canvas, prog) do

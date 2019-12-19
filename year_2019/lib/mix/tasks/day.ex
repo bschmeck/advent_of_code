@@ -20,4 +20,5 @@ defmodule Mix.Tasks.Day do
   def run(["10.1"]), do: Day10.Asteroids.run(1)
   def run(["10.2"]), do: Day10.Asteroids.run(2)
   def run(["11.1"]), do: Day11.Robot.panel_count() |> IO.inspect
+  def run(["11.2"]), do: Day11.Robot.registration()
 end
