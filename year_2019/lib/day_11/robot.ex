@@ -1,6 +1,36 @@
 defmodule Day11.Robot do
   defstruct direction: :up, location: {0, 0}
 
+  def panel_count() do
+    robot = %__MODULE__{}
+    machine = InputFile.contents_of(11) |> Intcode.build
+    my_pid = self()
+    prog = spawn(fn -> Intcode.execute(machine, {:mailbox, my_pid}) end)
+    canvas = step(robot, %{}, prog)
+
+    Map.values(canvas) |> Enum.count
+  end
+
+  def step(robot, canvas, prog) do
+    if Process.alive?(prog) do
+      color = Map.get(canvas, robot.location, 0)
+      send prog, color
+      paint = receive do
+        a -> a
+      end
+      turn = receive do
+        0 -> :left
+        1 -> :right
+      end
+      canvas = Map.put(canvas, robot.location, paint)
+      robot = move(robot, turn)
+
+      step(robot, canvas, prog)
+    else
+      canvas
+    end
+  end
+
   def move(%__MODULE__{direction: :down} = robot, :left), do: do_move(robot, :right)
   def move(%__MODULE__{direction: :down} = robot, :right), do: do_move(robot, :left)
   def move(%__MODULE__{direction: :left} = robot, :left), do: do_move(robot, :down)
