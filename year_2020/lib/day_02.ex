@@ -12,11 +12,8 @@ defmodule Day02 do
   end
 
   defp parse(line) do
-    parts = Regex.named_captures(~r/(?<min>\d+)-(?<max>\d+) (?<char>.): (?<password>.*)/, line)
+    {:ok, [min, max, char, password], _, _, _, _} = Day02.Parser.password_row(line)
 
-    {
-      %Day02.Policy{min: parts |> Map.get("min") |> String.to_integer(), max: parts |> Map.get("max") |> String.to_integer(), char: Map.get(parts, "char")},
-      Map.get(parts, "password")
-    }
+    { %Day02.Policy{min: min, max: max, char: char}, password }
   end
 end
