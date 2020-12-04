@@ -21,8 +21,8 @@ defmodule Day04 do
 
   defp parse_passport(parts) do
     parts
-    |> Enum.map(&(String.split(&1, ":")))
-    |> Enum.reduce(%{}, fn([k, v], map) -> Map.put(map, k, v) end)
+    |> Enum.map(&String.split(&1, ":"))
+    |> Enum.reduce(%{}, fn [k, v], map -> Map.put(map, k, v) end)
   end
 
   defp valid?(passport) do
@@ -31,7 +31,7 @@ defmodule Day04 do
 
   defp valid_fields?(passport) do
     ~w[byr iyr eyr hgt hcl ecl pid]
-    |> Enum.all?(&(Map.has_key?(passport, &1)))
+    |> Enum.all?(&Map.has_key?(passport, &1))
   end
 
   defp valid_contents?(passport) do
@@ -42,8 +42,13 @@ defmodule Day04 do
   defp valid_contents_for_field?({"byr", n}), do: number_between?(n, 1920, 2002)
   defp valid_contents_for_field?({"iyr", n}), do: number_between?(n, 2010, 2020)
   defp valid_contents_for_field?({"eyr", n}), do: number_between?(n, 2020, 2030)
-  defp valid_contents_for_field?({"hgt", <<n :: binary-size(2), "in">>}), do: number_between?(n, 59, 76)
-  defp valid_contents_for_field?({"hgt", <<n :: binary-size(3), "cm">>}), do: number_between?(n, 150, 193)
+
+  defp valid_contents_for_field?({"hgt", <<n::binary-size(2), "in">>}),
+    do: number_between?(n, 59, 76)
+
+  defp valid_contents_for_field?({"hgt", <<n::binary-size(3), "cm">>}),
+    do: number_between?(n, 150, 193)
+
   defp valid_contents_for_field?({"hcl", c}), do: c =~ ~r/^#[0-9-a-f]{6}$/
   defp valid_contents_for_field?({"ecl", "amb"}), do: true
   defp valid_contents_for_field?({"ecl", "blu"}), do: true
@@ -56,7 +61,9 @@ defmodule Day04 do
   defp valid_contents_for_field?({"cid", _}), do: true
   defp valid_contents_for_field?(_), do: false
 
-  defp number_between?(n, low, high) when is_binary(n), do: number_between?(String.to_integer(n), low, high)
+  defp number_between?(n, low, high) when is_binary(n),
+    do: number_between?(String.to_integer(n), low, high)
+
   defp number_between?(n, low, high) when n >= low and n <= high, do: true
   defp number_between?(_, _, _), do: false
 end
