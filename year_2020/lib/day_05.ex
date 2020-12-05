@@ -3,6 +3,13 @@ defmodule Day05 do
     seat_ids() |> Enum.max
   end
 
+  def part_two do
+    seat_ids()
+    |> Enum.sort
+    |> Enum.chunk_every(3, 1, :discard)
+    |> Enum.reject(fn [a, b,c] -> a + 1 == b && c - 1 == b end)
+  end
+
   def seat_ids do
     InputFile.contents_of(5, :stream)
     |> Enum.map(&String.trim/1)
