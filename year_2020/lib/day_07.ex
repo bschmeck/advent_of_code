@@ -9,6 +9,15 @@ defmodule Day07 do
     |> Enum.count
   end
 
+  def part_two do
+    InputFile.contents_of(7, :stream)
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&parse/1)
+    |> Enum.reduce(%{}, fn({color, content}, rules) -> Map.put(rules, color, content) end)
+    |> count("shiny gold")
+    |> Kernel.-(1)
+  end
+
   def parse(line) do
     ~r/^(?<color>.*) bags contain (?<contents>.*)\.$/
     |> Regex.named_captures(line)
@@ -36,5 +45,11 @@ defmodule Day07 do
   defp extract_contents([str | rest], contents) do
     c = Day07.Contents.parse(str)
     extract_contents(rest, [c | contents])
+  end
+
+  defp count(rules, bag_color) do
+    {:ok, contents} = Map.fetch(rules, bag_color)
+
+    1 + Enum.reduce(contents, 0, fn(content, total) -> total + content.number * count(rules, content.color) end)
   end
 end
