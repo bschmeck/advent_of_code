@@ -17,7 +17,7 @@ defmodule Day07 do
 
   def invert({color, contents}), do: invert(color, contents, %{})
   def invert(_color, [], map), do: map
-  def invert(color, [content | rest], map), do: invert(color, rest, Map.put(map, content, [color]))
+  def invert(color, [content | rest], map), do: invert(color, rest, Map.put(map, content.color, [color]))
 
   def containers(_map, [], seen), do: seen
   def containers(map, colors, seen) do
@@ -34,10 +34,7 @@ defmodule Day07 do
   defp extract_contents(raw), do: extract_contents(raw, [])
   defp extract_contents([], contents), do: contents
   defp extract_contents([str | rest], contents) do
-    color = ~r/\d+ (?<color>.*) bags?$/
-    |> Regex.named_captures(String.trim(str))
-    |> Map.get("color")
-
-    extract_contents(rest, [color | contents])
+    c = Day07.Contents.parse(str)
+    extract_contents(rest, [c | contents])
   end
 end
