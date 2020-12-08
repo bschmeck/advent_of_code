@@ -1,4 +1,6 @@
 defmodule Day05 do
+  use Bitwise
+
   def part_one do
     seat_ids() |> Enum.max
   end
@@ -16,16 +18,10 @@ defmodule Day05 do
     |> Enum.map(&seat_id/1)
   end
 
-  def seat_id(<<rows :: binary-size(7), cols :: binary-size(3)>>) do
-    row_number(rows) * 8 + column_number(cols)
-  end
-
-  def row_number(rows), do: bisect(rows, 0, 127)
-  def column_number(cols), do: bisect(cols, 0, 7)
-
-  defp bisect("", n, n), do: n
-  defp bisect(<<"F", rest :: binary>>, low, high), do: bisect(rest, low, round(:math.floor((high - low) / 2) + low))
-  defp bisect(<<"L", rest :: binary>>, low, high), do: bisect(rest, low, round(:math.floor((high - low) / 2) + low))
-  defp bisect(<<"B", rest :: binary>>, low, high), do: bisect(rest, round(:math.ceil((high - low) / 2) + low), high)
-  defp bisect(<<"R", rest :: binary>>, low, high), do: bisect(rest, round(:math.ceil((high - low) / 2) + low), high)
+  def seat_id(str), do: seat_id(str, 0)
+  def seat_id("", n), do: n
+  def seat_id(<<"F", rest :: binary>>, n), do: seat_id(rest, n <<< 1)
+  def seat_id(<<"B", rest :: binary>>, n), do: seat_id(rest, n <<< 1 ||| 1)
+  def seat_id(<<"L", rest :: binary>>, n), do: seat_id(rest, n <<< 1)
+  def seat_id(<<"R", rest :: binary>>, n), do: seat_id(rest, n <<< 1 ||| 1)
 end
