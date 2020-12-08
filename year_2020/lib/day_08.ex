@@ -4,7 +4,7 @@ defmodule Day08 do
     |> Enum.map(&String.trim/1)
     |> Enum.map(&parse/1)
     |> Day08.TapeMachine.new()
-    |> Day08.TapeMachine.detect_loop()
+    |> Day08.TapeMachine.execute()
   end
 
   defp parse(<<opcode :: binary-size(3), " +", value :: binary>>), do: {opcode, String.to_integer(value)}

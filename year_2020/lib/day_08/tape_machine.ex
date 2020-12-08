@@ -3,22 +3,26 @@ defmodule Day08.TapeMachine do
 
   def new([instruction | rest]), do: %__MODULE__{prev: [], next: rest, current: instruction, accum: 0}
 
-  def detect_loop(%__MODULE__{current: :seen} = machine), do: machine.accum
-  def detect_loop(%__MODULE__{current: {"nop", _val}}=machine) do
-    [instr | rest] = machine.next
-    detect_loop(%__MODULE__{machine | prev: [:seen | machine.prev], next: rest, current: instr})
+  def execute(%__MODULE__{current: :seen} = machine), do: {:loop, machine.accum}
+  def execute(%__MODULE__{current: :done} = machine), do: {:ok, machine.accum}
+  def execute(%__MODULE__{current: {"nop", _val}}=machine) do
+    %__MODULE__{machine | current: :seen}
+    |> advance(1)
+    |> execute()
   end
-  def detect_loop(%__MODULE__{current: {"acc", val}}=machine) do
-    [instr | rest] = machine.next
-    detect_loop(%__MODULE__{machine | prev: [:seen | machine.prev], next: rest, current: instr, accum: machine.accum + val})
+  def execute(%__MODULE__{current: {"acc", val}}=machine) do
+    %__MODULE__{machine | current: :seen, accum: machine.accum + val}
+    |> advance(1)
+    |> execute()
   end
-  def detect_loop(%__MODULE__{current: {"jmp", val}}=machine) do
+  def execute(%__MODULE__{current: {"jmp", val}}=machine) do
     %__MODULE__{machine | current: :seen}
     |> advance(val)
-    |> detect_loop()
+    |> execute()
   end
 
   def advance(%__MODULE__{} = machine, 0), do: machine
+  def advance(%__MODULE__{next: []} = machine, 1), do: %__MODULE__{machine | prev: [machine.current | machine.prev], current: :done}
   def advance(%__MODULE__{next: [instr | rest]} = machine, step) when step > 0 do
     %__MODULE__{machine | next: rest, prev: [machine.current | machine.prev], current: instr}
     |> advance(step - 1)
