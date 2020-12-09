@@ -8,9 +8,10 @@ defmodule Day09 do
   def part_two(file_reader \\ InputFile, preamble_len \\ 25) do
     stream = stream(file_reader)
 
-    weakness = stream
-    |> Enum.split(preamble_len)
-    |> find_weakness()
+    weakness =
+      stream
+      |> Enum.split(preamble_len)
+      |> find_weakness()
 
     find_encryption_weakness(stream, weakness)
   end
@@ -27,20 +28,25 @@ defmodule Day09 do
     stream
     |> Enum.any?(fn a -> MapSet.member?(set, n - a) && n != a * 2 end)
     |> case do
-        true -> find_weakness({tl(stream) ++ [n], rest})
-        _ -> n
+      true -> find_weakness({tl(stream) ++ [n], rest})
+      _ -> n
     end
   end
 
   defp find_encryption_weakness(stream, target) do
     case find_encryption_weakness_seq(stream, target, []) do
-      nil -> find_encryption_weakness(tl(stream), target)
+      nil ->
+        find_encryption_weakness(tl(stream), target)
+
       arr ->
         {a, b} = Enum.min_max(arr)
         a + b
     end
   end
+
   defp find_encryption_weakness_seq(_stream, 0, sequence), do: sequence
   defp find_encryption_weakness_seq([n | _rest], target, _sequence) when n > target, do: nil
-  defp find_encryption_weakness_seq([n | rest], target, sequence), do: find_encryption_weakness_seq(rest, target - n, [n | sequence])
+
+  defp find_encryption_weakness_seq([n | rest], target, sequence),
+    do: find_encryption_weakness_seq(rest, target - n, [n | sequence])
 end

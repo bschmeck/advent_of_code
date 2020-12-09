@@ -17,6 +17,7 @@ defmodule Day06 do
   end
 
   defp accum("", sets), do: {:cont, sets, []}
+
   defp accum(line, sets) do
     set = line |> String.split("", trim: true) |> Enum.into(MapSet.new())
     {:cont, [set | sets]}
