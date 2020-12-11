@@ -5,9 +5,15 @@ defmodule Day11.Seats do
 
   def stabilize(%__MODULE__{grid: grid}, advancer) do
     case advancer.(grid) do
-      {:stable, grid} -> grid
+      {:stable, grid} -> %__MODULE__{grid: grid}
       {:change, grid} -> stabilize(%__MODULE__{grid: grid}, advancer)
     end
+  end
+
+  def count_empty_seats(%__MODULE__{grid: grid}) do
+    grid
+    |> Map.values()
+    |> Enum.count(fn a -> a == "#" end)
   end
 
   defp gridify([], _, grid), do: grid

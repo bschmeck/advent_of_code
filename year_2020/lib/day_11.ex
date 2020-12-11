@@ -4,8 +4,7 @@ defmodule Day11 do
     |> Enum.map(&String.trim/1)
     |> Day11.Seats.new()
     |> Day11.Seats.stabilize(&advance_v1/1)
-    |> Map.values()
-    |> Enum.count(fn a -> a == "#" end)
+    |> Day11.Seats.count_empty_seats()
   end
 
   def part_two(file_reader \\ InputFile) do
@@ -13,8 +12,7 @@ defmodule Day11 do
     |> Enum.map(&String.trim/1)
     |> Day11.Seats.new()
     |> Day11.Seats.stabilize(&advance_v2/1)
-    |> Map.values()
-    |> Enum.count(fn a -> a == "#" end)
+    |> Day11.Seats.count_empty_seats()
   end
 
   def advance_v1(grid) do
