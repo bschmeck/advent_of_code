@@ -27,25 +27,22 @@ defmodule Day11.Seats do
   end
 
   defp advance(grid, opts) do
-    new_vals = Enum.map(grid, fn entry -> new_value(entry, grid, opts) end)
-
-    outcome = Enum.any?(new_vals, fn {_key, _new_val, result} -> result == :change end)
-    |> case do
-        true -> :change
-        false -> :stable
-      end
-
-    {outcome, Enum.into(new_vals, %{}, fn {key, val, _result} -> {key, val} end)}
+    grid
+    |> Enum.map(fn entry -> new_value(entry, grid, opts) end)
+    |> Enum.reduce({:stable, %{}}, fn
+      {pos, val, val}, {outcome, grid} -> {outcome, Map.put(grid, pos, val)}
+      {pos, _old_val, new_val}, {_, grid} -> {:change, Map.put(grid, pos, new_val)}
+    end)
   end
 
-  def new_value({pos, "."}, _grid, _opts), do: {pos, ".", :stable}
+  def new_value({pos, "."}, _grid, _opts), do: {pos, ".", "."}
   def new_value({pos, "L"}, grid, ignore_floor: ignore_floor, threshold: _) do
     pos
     |> adjacent(grid, ignore_floor)
     |> Enum.count(fn seat -> seat == "#" end)
     |> case do
-        0 -> {pos, "#", :change}
-        _ -> {pos, "L", :stable}
+        0 -> {pos, "L", "#"}
+        _ -> {pos, "L", "L"}
     end
   end
   def new_value({pos, "#"}, grid, ignore_floor: ignore_floor, threshold: threshold) do
@@ -53,8 +50,8 @@ defmodule Day11.Seats do
     |> adjacent(grid, ignore_floor)
     |> Enum.count(fn seat -> seat == "#" end)
     |> case do
-        x when x >= threshold -> {pos, "L", :change}
-        _ -> {pos, "#", :stable}
+        x when x >= threshold -> {pos, "#", "L"}
+        _ -> {pos, "#", "#"}
     end
   end
 
