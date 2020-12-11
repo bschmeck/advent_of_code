@@ -59,7 +59,14 @@ defmodule Day11.Seats do
   end
 
   def adjacent({x, y}, grid, ignore_floor) do
-    [{-1, -1}, {0, -1}, {1, -1},{-1, 0}, {1, 0},{-1, 1}, {0, 1}, {1, 1}]
+    for i <- -1..1 do
+              for j <- -1..1, do: {i, j}
+    end
+    |> Enum.concat()
+    |> Enum.reject(fn
+      {0, 0} -> true
+      _ -> false
+    end)
     |> Enum.map(&(seat_in_dir(&1, {x, y}, 1, grid, ignore_floor)))
   end
 
