@@ -2,8 +2,8 @@ defmodule Day11 do
   def part_one(file_reader \\ InputFile) do
     file_reader.contents_of(11, :stream)
     |> Enum.map(&String.trim/1)
-    |> gridify()
-    |> stabilize(&advance_v1/1)
+    |> Day11.Seats.new()
+    |> Day11.Seats.stabilize(&advance_v1/1)
     |> Map.values()
     |> Enum.count(fn a -> a == "#" end)
   end
@@ -11,28 +11,10 @@ defmodule Day11 do
   def part_two(file_reader \\ InputFile) do
     file_reader.contents_of(11, :stream)
     |> Enum.map(&String.trim/1)
-    |> gridify()
-    |> stabilize(&advance_v2/1)
+    |> Day11.Seats.new()
+    |> Day11.Seats.stabilize(&advance_v2/1)
     |> Map.values()
     |> Enum.count(fn a -> a == "#" end)
-  end
-
-  defp gridify(input), do: gridify(input, 0, %{})
-  defp gridify([], _, grid), do: grid
-  defp gridify([line | rest], row, grid) do
-    grid = line
-    |> String.split("", trim: true)
-    |> Enum.with_index()
-    |> Enum.into(grid, fn {char, col} -> {{row, col}, char} end)
-
-    gridify(rest, row + 1, grid)
-  end
-
-  defp stabilize(grid, advancer) do
-    case advancer.(grid) do
-      {:stable, grid} -> grid
-      {:change, grid} -> stabilize(grid, advancer)
-    end
   end
 
   def advance_v1(grid) do
