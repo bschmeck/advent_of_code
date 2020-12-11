@@ -14,15 +14,4 @@ defmodule Day11 do
     |> Day11.Seats.stabilize(ignore_floor: true, threshold: 5)
     |> Day11.Seats.count_empty_seats()
   end
-
-  def print(grid) do
-    for i <- 0..9 do
-      pts = for j <- 0..9, do: {i, j}
-
-      pts
-      |> Enum.map(fn pos -> Map.get(grid, pos) end)
-      |> Enum.join()
-      |> IO.puts()
-    end
-  end
 end

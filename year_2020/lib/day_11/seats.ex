@@ -85,3 +85,20 @@ defmodule Day11.Seats do
     end
   end
 end
+
+defimpl String.Chars, for: Day11.Seats do
+  def to_string(%Day11.Seats{grid: grid}) do
+    for i <- 0..9 do
+      pts = for j <- 0..9, do: {i, j}
+
+      pts
+      |> Enum.map(fn pos -> Map.get(grid, pos) end)
+      |> Enum.join()
+    end
+    |> Enum.join("\n")
+  end
+end
+
+defimpl Inspect, for: Day11.Seats do
+  def inspect(seats, _), do: to_string(seats)
+end
