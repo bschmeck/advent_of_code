@@ -21,8 +21,8 @@ defmodule Day11 do
 
       pts
       |> Enum.map(fn pos -> Map.get(grid, pos) end)
-      |> Enum.join
-      |> IO.puts
+      |> Enum.join()
+      |> IO.puts()
     end
   end
 end

@@ -1,10 +1,11 @@
 defmodule Day10 do
   def part_one(file_reader \\ InputFile) do
-    deltas = jolts(file_reader)
-    |> Enum.sort
-    |> List.insert_at(0, 0)
-    |> Enum.chunk_every(2, 1, :discard)
-    |> Enum.map(fn [a, b] -> b - a end)
+    deltas =
+      jolts(file_reader)
+      |> Enum.sort()
+      |> List.insert_at(0, 0)
+      |> Enum.chunk_every(2, 1, :discard)
+      |> Enum.map(fn [a, b] -> b - a end)
 
     # Add an extra delta of 3 bc our device has 3 jolts more than the last adapter
     Enum.count(deltas, &(&1 == 1)) * (Enum.count(deltas, &(&1 == 3)) + 1)
@@ -16,13 +17,13 @@ defmodule Day10 do
   # of allowed combinations.
   def part_two(file_reader \\ InputFile) do
     jolts(file_reader)
-    |> Enum.sort
+    |> Enum.sort()
     |> List.insert_at(0, 0)
     |> Enum.chunk_every(2, 1, :discard)
     |> Enum.map(fn [a, b] -> b - a end)
     |> Enum.chunk_while([], &chunk/2, &finish/1)
     |> Enum.reject(&(&1 == nil))
-    |> Enum.map(&(Enum.reverse(&1)))
+    |> Enum.map(&Enum.reverse(&1))
     |> Enum.map(&combos/1)
     |> Enum.reduce(fn a, b -> a * b end)
   end
@@ -34,13 +35,16 @@ defmodule Day10 do
   end
 
   def valid_orderings(joltages), do: valid_orderings([[0]], joltages)
-  def valid_orderings(orderings, [joltage]), do: Enum.filter(orderings, fn o -> joltage - hd(o) <= 3 end)
+
+  def valid_orderings(orderings, [joltage]),
+    do: Enum.filter(orderings, fn o -> joltage - hd(o) <= 3 end)
+
   def valid_orderings(orderings, [joltage | rest]) do
     orderings
     |> Enum.flat_map(fn
       o when joltage - hd(o) <= 3 -> [o, [joltage | o]]
       _ -> []
-      end)
+    end)
     |> valid_orderings(rest)
   end
 
