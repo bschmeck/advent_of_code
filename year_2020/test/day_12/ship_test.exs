@@ -8,8 +8,4 @@ defmodule Day12.ShipTest do
   test "it mods by 360" do
     assert Day12.Ship.rotate(%Day12.Ship{dir: 270}, 90).dir == 0
   end
-
-  test "it converts negatives to positives" do
-    assert Day12.Ship.rotate(%Day12.Ship{dir: 0}, -90).dir == 270
-  end
 end
