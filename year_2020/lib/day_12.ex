@@ -1,10 +1,13 @@
 defmodule Day12 do
 
-  def part_one(file_reader \\ InputFile) do
+  def part_one(file_reader \\ InputFile), do: navigate(file_reader, Day12.Ship)
+  def part_two(file_reader \\ InputFile), do: navigate(file_reader, Day12.WaypointShip)
+
+  def navigate(file_reader, ship_type) do
     ship = file_reader.contents_of(12, :stream)
     |> Enum.map(&String.trim/1)
     |> Enum.map(&parse/1)
-    |> Day12.Ship.follow_instructions()
+    |> ship_type.follow_instructions()
 
     abs(ship.x) + abs(ship.y)
   end
