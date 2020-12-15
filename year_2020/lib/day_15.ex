@@ -3,6 +3,10 @@ defmodule Day15 do
     play(numbers, 2020)
   end
 
+  def part_two(numbers \\ [12,20,0,6,1,17,7]) do
+    play(numbers,3_0000_000 )
+  end
+
   def play([speak | rest], goal), do: play(rest, 1, speak, %{}, goal)
   def play(_, turn, speak, _spoken, goal) when goal == turn, do: speak
   def play([], turn, speak, spoken, goal) do
