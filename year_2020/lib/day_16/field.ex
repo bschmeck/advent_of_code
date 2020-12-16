@@ -1,8 +1,9 @@
 defmodule Day16.Field do
   defstruct [:name, :ranges]
 
-  def valid_value?(%__MODULE__{ranges: ranges}, value),
-    do: Enum.any?(ranges, &Enum.member?(&1, value))
+  def valid_value?(%__MODULE__{ranges: ranges}, value) do
+    Enum.any?(ranges, &Enum.member?(&1, value))
+  end
 
   def parse(line) do
     [name, ranges] = String.split(line, ":") |> Enum.map(&String.trim/1)
