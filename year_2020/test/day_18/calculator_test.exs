@@ -27,4 +27,15 @@ defmodule Day18.CalculatorTest do
     assert Day18.Calculator.eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 12240
     assert Day18.Calculator.eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 13632
   end
+
+  test "advanced_eval without parens works" do
+    assert Day18.Calculator.advanced_eval("1 + 2 * 3 + 4 * 5 + 6") == 231
+  end
+
+  test "the AoC advanced math examples work" do
+    assert Day18.Calculator.advanced_eval("2 * 3 + (4 * 5)") == 46
+    assert Day18.Calculator.advanced_eval("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 1445
+    assert Day18.Calculator.advanced_eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669060
+    assert Day18.Calculator.advanced_eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 23340
+  end
 end
