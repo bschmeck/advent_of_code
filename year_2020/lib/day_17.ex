@@ -3,6 +3,10 @@ defmodule Day17 do
     perform(file_reader, Day17.PocketDimension)
   end
 
+  def part_two(file_reader \\ InputFile) do
+    perform(file_reader, Day17.PocketDimension4D)
+  end
+
   def perform(file_reader, dimension_mod) do
     final = file_reader.contents_of(17)
     |> dimension_mod.parse()
