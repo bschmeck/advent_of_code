@@ -4,4 +4,8 @@ defmodule Day18.CalculatorTest do
   test "it can add" do
     assert Day18.Calculator.eval("1 + 2") == 3
   end
+
+  test "it can multiply" do
+    assert Day18.Calculator.eval("1 * 2") == 2
+  end
 end
