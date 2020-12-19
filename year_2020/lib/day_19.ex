@@ -14,17 +14,10 @@ defmodule Day19 do
   def build(rule_strs) do
     f = rule_strs
     |> Enum.map(&parse/1)
-    |> sort()
-    |> Enum.reduce(%{}, fn
-      {n, c}, map when is_binary(c) -> Map.put(map, n, Day19.Rule.build(c))
-      {n, rule_numbers}, map -> Map.put(map, n, Day19.Rule.build(rule_lookup(rule_numbers, map)))
-    end)
+    |> build_pass([], %{})
     |> Map.get(0)
 
     fn s -> f.(s) == true end
-  end
-  def sort(rules) do
-    Enum.sort(rules, &compare/2)
   end
 
   def parse(rule_str) do
@@ -40,24 +33,30 @@ defmodule Day19 do
     |> Enum.map(fn l -> String.split(l) |> Enum.map(&String.to_integer/1) end)
   end
 
-  def compare({_a, str}, {_b, lst}) when is_binary(str) and is_list(lst), do: true
-  def compare({_a, lst}, {_b, str}) when is_binary(str) and is_list(lst), do: false
-  def compare({a, str_a}, {b, str_b}) when is_binary(str_a) and is_binary(str_b), do: a <= b
-  def compare({a, lst_a}, {b, lst_b}) do
-    cond do
-      depends_on?(lst_a, b) -> false
-      depends_on?(lst_b, a) -> true
-      true -> a <= b
+  def build_pass([], [], map), do: map
+  def build_pass([], pending, map), do: build_pass(pending, [], map)
+  def build_pass([{index, char} | rest], pending, map) when is_binary(char) do
+    build_pass(rest, pending, Map.put(map, index, Day19.Rule.build(char)))
+  end
+  def build_pass([{index, rule_numbers} = rule | rest], pending, map) do
+    case rule_lookup(rule_numbers, map) do
+      :error -> build_pass(rest, [rule | pending], map)
+      translated -> build_pass(rest, pending, Map.put(map, index, Day19.Rule.build(translated)))
     end
   end
 
-  def depends_on?([], _), do: false
-  def depends_on?([n | _rest], n), do: true
-  def depends_on?([l | rest], n) when is_list(l), do: depends_on?(l ++ rest, n)
-  def depends_on?([_ | rest], n), do: depends_on?(rest, n)
-
   def rule_lookup(rule_numbers, map), do: rule_lookup(rule_numbers, map, [])
   def rule_lookup([], _map, rules), do: Enum.reverse(rules)
-  def rule_lookup([n | rest], map, rules) when is_list(n), do: rule_lookup(rest, map, [rule_lookup(n, map) | rules])
-  def rule_lookup([n | rest], map, rules), do: rule_lookup(rest, map, [Map.fetch!(map, n) | rules])
+  def rule_lookup([n | rest], map, rules) when is_list(n) do
+    case rule_lookup(n, map) do
+      :error -> :error
+      translated -> rule_lookup(rest, map, [translated | rules])
+    end
+  end
+  def rule_lookup([n | rest], map, rules) do
+    case Map.fetch(map, n) do
+      :error -> :error
+      {:ok, rule} -> rule_lookup(rest, map, [rule | rules])
+    end
+  end
 end
