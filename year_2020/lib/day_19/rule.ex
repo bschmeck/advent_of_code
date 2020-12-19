@@ -1,22 +1,25 @@
 defmodule Day19.Rule do
-  def build(char) when is_binary(char) do
-    fn {:ok, s} -> call(s, char)
-      s -> call(s, char)
-    end
-  end
-  def build(rules) when is_list(rules) do
+  def build(char) when is_binary(char), do: fn s -> call(s, char) end
+  def build(rule_list) when is_list(rule_list) do
     fn s ->
-      Enum.reduce(rules, {:ok, s}, fn
-        _, false -> false
-        rule, {:ok, s} -> rule.(s)
+      Stream.map(rule_list, fn rules ->
+        Enum.reduce(rules, s, fn
+          _, false -> false
+          rule, s -> rule.(s)
+        end)
       end)
+      |> Stream.filter(fn
+        false -> false
+        _ -> true
+      end)
+      |> Enum.at(0, false)
     end
   end
 
   defp call(char, char), do: true
   defp call(str, char) do
     case String.starts_with?(str, char) do
-      true -> {:ok, String.replace_prefix(str, char, "")}
+      true -> String.replace_prefix(str, char, "")
       false -> false
     end
   end
