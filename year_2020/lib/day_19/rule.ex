@@ -6,11 +6,10 @@ defmodule Day19.Rule do
   end
   def build(rules) when is_list(rules) do
     fn s ->
-      case hd(rules).(s) do
-        {:ok, ""} -> true
-        {:ok, s} -> hd(tl(rules)).(s)
-        _ -> false
-      end
+      Enum.reduce(rules, {:ok, s}, fn
+        _, false -> false
+        rule, {:ok, s} -> rule.(s)
+      end)
     end
   end
 

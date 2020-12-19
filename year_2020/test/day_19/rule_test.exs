@@ -23,4 +23,14 @@ defmodule Day19.RuleTest do
     refute rule.("ba")
     assert {:ok, "cde"} == rule.("abcde")
   end
+
+  test "it can combine multiple rules" do
+    rule_a = Day19.Rule.build("a")
+    rule_b = Day19.Rule.build("b")
+    rule = Day19.Rule.build([rule_a, rule_b, rule_a])
+
+    assert rule.("aba")
+    refute rule.("baa")
+    assert {:ok, "cde"} == rule.("abacde")
+  end
 end
