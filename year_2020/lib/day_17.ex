@@ -8,14 +8,16 @@ defmodule Day17 do
   end
 
   def perform(file_reader, dimension_mod) do
-    final = file_reader.contents_of(17)
-    |> dimension_mod.parse()
-    |> run_simulation(6, &dimension_mod.simulate/1)
+    final =
+      file_reader.contents_of(17)
+      |> dimension_mod.parse()
+      |> run_simulation(6, &dimension_mod.simulate/1)
 
     Enum.count(final.grid)
   end
 
   def run_simulation(dim, 0, _simulator), do: dim
+
   def run_simulation(dim, n, simulator) do
     dim
     |> simulator.()

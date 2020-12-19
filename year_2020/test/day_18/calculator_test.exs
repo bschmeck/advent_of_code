@@ -35,7 +35,9 @@ defmodule Day18.CalculatorTest do
   test "the AoC advanced math examples work" do
     assert Day18.Calculator.advanced_eval("2 * 3 + (4 * 5)") == 46
     assert Day18.Calculator.advanced_eval("5 + (8 * 3 + 9 + 3 * 4 * 3)") == 1445
-    assert Day18.Calculator.advanced_eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669060
-    assert Day18.Calculator.advanced_eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") == 23340
+    assert Day18.Calculator.advanced_eval("5 * 9 * (7 * 3 * 3 + 9 * 3 + (8 + 6 * 4))") == 669_060
+
+    assert Day18.Calculator.advanced_eval("((2 + 4 * 9) * (6 + 9 * 8 + 6) + 6) + 2 + 4 * 2") ==
+             23340
   end
 end

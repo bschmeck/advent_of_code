@@ -16,19 +16,24 @@ defmodule Day18.Calculator do
 
   def eval(["(" | rest], stack), do: eval(rest, ["(" | stack])
   def eval([")" | rest], [v | ["(" | stack]]), do: eval([v | rest], stack)
-  def eval(["+" | rest], stack), do: eval(rest, [&Kernel.+/2 | stack])
-  def eval(["*" | rest], stack), do: eval(rest, [&Kernel.*/2 | stack])
+  def eval(["+" | rest], stack), do: eval(rest, [(&Kernel.+/2) | stack])
+  def eval(["*" | rest], stack), do: eval(rest, [(&Kernel.*/2) | stack])
   def eval([v | rest], [f | [n | stack]]) when is_function(f), do: eval(rest, [f.(v, n) | stack])
   def eval([v | rest], stack), do: eval(rest, [v | stack])
   def eval([], [result]), do: result
 
   def advanced_eval(["(" | rest], stack), do: advanced_eval(rest, ["(" | stack])
+
   def advanced_eval([")" | rest], stack) do
     {v, stack} = paren_eval(stack)
     advanced_eval([v | rest], stack)
   end
-  def advanced_eval(["+" | rest], stack), do: advanced_eval(rest, [&Kernel.+/2 | stack])
-  def advanced_eval([v | rest], [f | [n | stack]]) when is_function(f), do: advanced_eval(rest, [f.(v, n) | stack])
+
+  def advanced_eval(["+" | rest], stack), do: advanced_eval(rest, [(&Kernel.+/2) | stack])
+
+  def advanced_eval([v | rest], [f | [n | stack]]) when is_function(f),
+    do: advanced_eval(rest, [f.(v, n) | stack])
+
   def advanced_eval([v | rest], stack), do: advanced_eval(rest, [v | stack])
   def advanced_eval([], result), do: result
 
@@ -38,7 +43,8 @@ defmodule Day18.Calculator do
 
   def parse("+"), do: ["+"]
   def parse("*"), do: ["*"]
-  def parse(<<"(", rest :: binary>>), do: ["("] ++ parse(rest)
+  def parse(<<"(", rest::binary>>), do: ["("] ++ parse(rest)
+
   def parse(v) do
     case Integer.parse(v) do
       {n, ""} -> [n]

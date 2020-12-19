@@ -8,6 +8,7 @@ defmodule Day19.Rule do
       end
     end
   end
+
   def build(rule_list) when is_list(rule_list) do
     fn s ->
       Stream.map(rule_list, fn rules ->
