@@ -11,15 +11,16 @@ defmodule Day19.Rule do
 
   def build(rule_list) when is_list(rule_list) do
     fn s ->
-      Stream.map(rule_list, fn rules ->
+      rule_list
+      |> Stream.map(fn rules ->
         Enum.reduce(rules, s, fn
           _, false -> false
           rule, s -> rule.(s)
         end)
       end)
       |> Stream.filter(fn
-        false -> false
-        _ -> true
+       false -> false
+       _ -> true
       end)
       |> Enum.at(0, false)
     end
