@@ -18,6 +18,10 @@ defmodule Day19Test do
   end
 
   test "it counts matching strings" do
-    assert Day19.part_one(InputTestFile) == 2
+    assert Day19.part_one(InputTestFile) == 3
+  end
+
+  test "it counts matching strings with repeating rules" do
+    assert Day19.part_two(InputTestFile) == 12
   end
 end
