@@ -24,7 +24,7 @@ defmodule Day19 do
     Enum.each(strs, fn str ->
       IO.puts "#{str} -> #{rule.(str)}"
     end)
-    Enum.count(strs, &(rule.(&1)))
+    Enum.filter(strs, &(rule.(&1)))
   end
 
   def replace_rules_8_and_11(<<"8:", _rest :: binary>>), do: "8: 42 | 42 8"
