@@ -22,7 +22,6 @@ defmodule Day19Test do
   end
 
   test "it counts matching strings with repeating rules" do
-    matches = ~w[bbabbbbaabaabba babbbbaabbbbbabbbbbbaabaaabaaa aaabbbbbbaaaabaababaabababbabaaabbababababaaa bbbbbbbaaaabbbbaaabbabaaa bbbababbbbaaaaaaaabbababaaababaabab ababaaaaaabaaab ababaaaaabbbaba baabbaaaabbaaaababbaababb abbbbabbbbaaaababbbbbbaaaababb aaaaabbaabaaaaababaa aaaabbaabbaaaaaaabbbabbbaaabbaabaaa aabbbbbaabbbaaaaaabbbbbababaaaaabbaaabba]
-    assert Day19.part_two(InputTestFile) |> Enum.sort == Enum.sort(matches)
+    assert Day19.part_two(InputTestFile) == 12
   end
 end

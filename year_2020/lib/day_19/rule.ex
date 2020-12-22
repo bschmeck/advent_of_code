@@ -6,7 +6,6 @@ defmodule Day19.Rule do
         String.starts_with?(s, char) -> String.replace_prefix(s, char, "")
         true -> false
       end
-      true -> true
     end
   end
 
@@ -19,12 +18,7 @@ defmodule Day19.Rule do
     |> Stream.map(fn rules ->
       Enum.reduce(rules, s, fn
         _, false -> false
-        :loop, s ->
-          ret = eval_many(rule_list, s)
-          ret
-        rule, s ->
-          ret = rule.(s)
-          ret
+        rule, s -> rule.(s)
       end)
     end)
     |> Stream.filter(fn

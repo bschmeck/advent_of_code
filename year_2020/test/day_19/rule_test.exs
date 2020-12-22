@@ -45,25 +45,4 @@ defmodule Day19.RuleTest do
     assert "cde" == rule.("abcde")
     assert "cde" == rule.("bacde")
   end
-
-  test "it can handle repetition" do
-    rule_a = Day19.Rule.build("a")
-    rule_b = Day19.Rule.build("b")
-    rule = Day19.Rule.build([[rule_a, rule_b], [rule_a, :loop]])
-
-    assert rule.("ab")
-    assert rule.("aab")
-    assert rule.("aaab")
-    assert "cde" == rule.("aabcde")
-    refute rule.("acb")
-  end
-
-  test "it can handle repetition in the middle" do
-    rule_a = Day19.Rule.build("a")
-    rule_b = Day19.Rule.build("b")
-    rule = Day19.Rule.build([[rule_a, rule_b], [rule_a, :loop, rule_b]])
-
-    assert rule.("aabb")
-    refute rule.("aabba")
-  end
 end
