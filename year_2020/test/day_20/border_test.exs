@@ -1,49 +1,68 @@
 defmodule Day20.BorderTest do
   use ExUnit.Case, async: true
 
-  test "it can parse the top of a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    border = Day20.Border.parse(rows)
-    assert border.top == hd(rows)
+  setup do
+    rows = [
+      "..##.#..#.",
+      "##..#.....",
+      "#...##..#.",
+      "####.#...#",
+      "##.##.###.",
+      "##...#.###",
+      ".#.#.#..##",
+      "..#....#..",
+      "###...#.#.",
+      "..###..###"
+    ]
+    {:ok, border: Day20.Border.parse(rows)}
+  end
+  test "it can parse the top of a border", %{border: border} do
+    assert border.top == "..##.#..#."
   end
 
-  test "it can parse the bottom of a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    border = Day20.Border.parse(rows)
-    assert border.bottom == rows |> Enum.reverse() |> hd() |> String.reverse()
+  test "it can parse the bottom of a border", %{border: border} do
+    assert border.bottom == "..###..###"
   end
 
-  test "it can parse the right edge of a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    border = Day20.Border.parse(rows)
+  test "it can parse the right edge of a border", %{border: border} do
     assert border.right == "...#.##..#"
   end
 
-  test "it can parse the left edge of a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    border = Day20.Border.parse(rows)
-    assert border.left == ".#..#####."
+  test "it can parse the left edge of a border", %{border: border} do
+    assert border.left == ".#####..#."
   end
 
-  test "it can rotate a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    orig = Day20.Border.parse(rows)
+  test "it can rotate a border", %{border: orig} do
     rotated = Day20.Border.rotate(orig)
 
-    assert orig.top == rotated.right
-    assert orig.right == rotated.bottom
-    assert orig.bottom == rotated.left
-    assert orig.left == rotated.top
+    assert rotated.top == ".#..#####."
+    assert rotated.right == "..##.#..#."
+    assert rotated.bottom == "#..##.#..."
+    assert rotated.left == "..###..###"
   end
 
-  test "it can flip a border" do
-    rows = ~w[..##.#..#. ##..#..... #...##..#. ####.#...# ##.##.###. ##...#.### .#.#.#..## ..#....#.. ###...#.#. ..###..###]
-    orig = Day20.Border.parse(rows)
+  test "it can flip a border", %{border: orig} do
     flipped = Day20.Border.flip(orig)
 
-    assert flipped.top == String.reverse(orig.top)
-    assert flipped.bottom == String.reverse(orig.bottom)
-    assert flipped.left == String.reverse(orig.right)
-    assert flipped.right == String.reverse(orig.left)
+    assert flipped.top == ".#..#.##.."
+    assert flipped.bottom == "###..###.."
+    assert flipped.left == "...#.##..#"
+    assert flipped.right == ".#####..#."
+  end
+
+  test "rotating 4 times doesn't change the border", %{border: orig} do
+    rotated = orig |> Day20.Border.rotate() |> Day20.Border.rotate() |> Day20.Border.rotate() |> Day20.Border.rotate()
+    assert rotated == orig
+  end
+
+  test "flipping twice doesn't change the border", %{border: orig} do
+    flipped = orig |> Day20.Border.flip() |> Day20.Border.flip()
+    assert flipped == orig
+  end
+
+  test "it can enumerate all possible sides", %{border: border} do
+    sorted_sides = border |> Day20.Border.possible_sides() |> Enum.sort()
+    expected = ["..##.#..#.", "..###..###", "...#.##..#", ".#####..#.", ".#..#.##..", "###..###..", "#..##.#...", ".#..#####."]
+    assert sorted_sides == Enum.sort(expected)
   end
 end

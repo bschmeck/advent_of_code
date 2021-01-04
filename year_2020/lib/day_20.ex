@@ -10,15 +10,32 @@ defmodule Day20 do
     |> Enum.map(&parse_tile/1)
     |> Enum.into(%{})
 
-    Map.values(tiles)
-    |> Enum.flat_map(&Day20.Border.to_list/1)
-    |> Enum.reduce(%{}, fn edge, map -> Map.update(map, edge, 1, &(&1 + 1)) end)
-    |> Map.values()
+    sides = tiles
+    |> Enum.flat_map(fn {id, border} ->
+      Day20.Border.possible_sides(border)
+      |> Enum.map(&({&1, id}))
+    end)
+    |> Enum.reduce(%{}, fn {side, id}, map -> Map.update(map, side, [id], fn v -> [id | v] end) end)
+
+    corners = tiles
+    |> Enum.filter(fn t -> possible_corder?(t, sides) end)
+    |> Enum.map(fn {id, _border} -> id end)
+
+    case Enum.count(corners) do
+      4 -> Enum.reduce(corners, &Kernel.*/2)
+      _ -> "Found #{Enum.count(corners)} corners"
+    end
   end
 
   defp parse_tile([<<"Tile ", rest :: binary>> | rows]) do
     {id, ":"} = Integer.parse(rest)
 
     {id, Day20.Border.parse(rows)}
+  end
+
+  defp possible_corder?({_id, border}, sides) do
+    [border.top, border.right, border.bottom, border.left]
+    |> Enum.reject(fn s -> Map.get(sides, s) |> Enum.count() > 1 end)
+    |> Enum.count() == 2
   end
 end
