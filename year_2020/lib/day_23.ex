@@ -3,27 +3,47 @@ defmodule Day23 do
     cups
     |> String.split("", trim: true)
     |> Enum.map(&String.to_integer/1)
-    |> play(moves)
+    |> build()
+    |> play(String.to_integer(String.at(cups, 0)), 9, moves)
     |> canonicalize()
   end
 
   def part_two(cups \\ "463528179") do
-    cups
-    |> String.split("", trim: true)
-    |> Enum.map(&String.to_integer/1)
-    |> Enum.concat(10..1_000_000)
-    |> play(10_000_000, 1_000_000)
-    |> find_cups(nil, nil)
+    result =
+      cups
+      |> String.split("", trim: true)
+      |> Enum.map(&String.to_integer/1)
+      |> Enum.concat(10..1_000_000)
+      |> build()
+      |> play(String.to_integer(String.at(cups, 0)), 1_000_000, 10_000_000)
+
+    cup1 = Map.get(result, 1)
+    cup2 = Map.get(result, cup1)
+
+    cup1 * cup2
   end
 
-  def play(cups, moves, max \\ 9)
-  def play(cups, 0, _max), do: cups
+  def build(cups), do: build(cups, hd(cups), %{})
+  def build([final], first, map), do: Map.put(map, final, first)
 
-  def play([current | [cup1 | [cup2 | [cup3 | rest]]]], n, max) do
-    dest = find_destination(current - 1, cup1, cup2, cup3, max)
+  def build([cup | [next_cup | rest]], first, map),
+    do: build([next_cup | rest], first, Map.put(map, cup, next_cup))
 
-    build_cups(rest, [cup1, cup2, cup3], dest, current, [])
-    |> play(n - 1, max)
+  def play(cups, _current, _max, 0), do: cups
+
+  def play(cups, current, max, moves) do
+    rem1 = Map.get(cups, current)
+    rem2 = Map.get(cups, rem1)
+    rem3 = Map.get(cups, rem2)
+    after_rem = Map.get(cups, rem3)
+    dest = find_destination(current - 1, rem1, rem2, rem3, max)
+    after_dest = Map.get(cups, dest)
+
+    cups
+    |> Map.put(current, after_rem)
+    |> Map.put(dest, rem1)
+    |> Map.put(rem3, after_dest)
+    |> play(after_rem, max, moves - 1)
   end
 
   def find_destination(0, cup1, cup2, cup3, max), do: find_destination(max, cup1, cup2, cup3, max)
@@ -35,28 +55,9 @@ defmodule Day23 do
 
   def find_destination(guess, _cup1, _cup2, _cup3, _max), do: guess
 
-  def canonicalize(cups) do
-    {a, b} = cups |> Enum.split_while(&(&1 != 1))
+  def canonicalize(cups), do: canonicalize(cups, [Map.get(cups, 1)])
+  def canonicalize(_cups, [1 | rest]), do: rest |> Enum.reverse() |> Enum.join()
 
-    "#{Enum.join(tl(b))}#{Enum.join(a)}"
-  end
-
-  def build_cups([], _removed, _dest, prev_current, cups) do
-    Enum.reverse([prev_current | cups])
-  end
-
-  def build_cups([dest | rest], [c1, c2, c3], dest, prev_current, cups) do
-    build_cups(rest, :done, dest, prev_current, [c3 | [c2 | [c1 | [dest | cups]]]])
-  end
-
-  def build_cups([cup | rest], removed, dest, prev_current, cups) do
-    build_cups(rest, removed, dest, prev_current, [cup | cups])
-  end
-
-  def find_cups([1 | [cup1 | [cup2 | _rest]]], _first, _second), do: cup1 * cup2
-  def find_cups([1 | [cup1 | []]], first, _second), do: cup1 * first
-  def find_cups([1], first, second), do: first * second
-  def find_cups([cup | rest], nil, nil), do: find_cups(rest, cup, nil)
-  def find_cups([cup | rest], first, nil), do: find_cups(rest, first, cup)
-  def find_cups([_cup | rest], first, second), do: find_cups(rest, first, second)
+  def canonicalize(cups, [next | _rest] = canon),
+    do: canonicalize(cups, [Map.get(cups, next) | canon])
 end

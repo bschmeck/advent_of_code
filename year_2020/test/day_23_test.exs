@@ -13,7 +13,7 @@ defmodule Day23Test do
     assert Day23.part_one("389125467") == "67384529"
   end
 
-  # test "it works for the big game" do
-  #   assert Day23.part_two("389125467") == 149245887792
-  # end
+  test "it works for the big game" do
+    assert Day23.part_two("389125467") == 149_245_887_792
+  end
 end
