@@ -14,8 +14,10 @@ defmodule Day20.BorderTest do
       "###...#.#.",
       "..###..###"
     ]
+
     {:ok, border: Day20.Border.parse(rows)}
   end
+
   test "it can parse the top of a border", %{border: border} do
     assert border.top == "..##.#..#."
   end
@@ -30,6 +32,23 @@ defmodule Day20.BorderTest do
 
   test "it can parse the left edge of a border", %{border: border} do
     assert border.left == ".#####..#."
+  end
+
+  test "it can parse the image data", %{border: border} do
+    image =
+      [
+        "#..#....",
+        "...##..#",
+        "###.#...",
+        "#.##.###",
+        "#...#.##",
+        "#.#.#..#",
+        ".#....#.",
+        "##...#.#"
+      ]
+      |> Enum.map(&String.split(&1, "", trim: true))
+
+    assert border.image == image
   end
 
   test "it can rotate a border", %{border: orig} do
@@ -51,7 +70,13 @@ defmodule Day20.BorderTest do
   end
 
   test "rotating 4 times doesn't change the border", %{border: orig} do
-    rotated = orig |> Day20.Border.rotate() |> Day20.Border.rotate() |> Day20.Border.rotate() |> Day20.Border.rotate()
+    rotated =
+      orig
+      |> Day20.Border.rotate()
+      |> Day20.Border.rotate()
+      |> Day20.Border.rotate()
+      |> Day20.Border.rotate()
+
     assert rotated == orig
   end
 
@@ -62,7 +87,18 @@ defmodule Day20.BorderTest do
 
   test "it can enumerate all possible sides", %{border: border} do
     sorted_sides = border |> Day20.Border.possible_sides() |> Enum.sort()
-    expected = ["..##.#..#.", "..###..###", "...#.##..#", ".#####..#.", ".#..#.##..", "###..###..", "#..##.#...", ".#..#####."]
+
+    expected = [
+      "..##.#..#.",
+      "..###..###",
+      "...#.##..#",
+      ".#####..#.",
+      ".#..#.##..",
+      "###..###..",
+      "#..##.#...",
+      ".#..#####."
+    ]
+
     assert sorted_sides == Enum.sort(expected)
   end
 end
