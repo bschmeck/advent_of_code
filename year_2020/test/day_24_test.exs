@@ -23,7 +23,7 @@ defmodule Day24Test do
   end
 
   test "it figures out tiles to check" do
-    expected = [{-1, -1}, {1, -1}, {-2, 0}, {0, 0}, {2, 0}, {-1, 1}, {1, 1}] |> Enum.sort
+    expected = [{-1, -1}, {1, -1}, {-2, 0}, {0, 0}, {2, 0}, {-1, 1}, {1, 1}] |> Enum.sort()
     assert Day24.tiles_to_check(%{{0, 0} => true}) |> Enum.sort() == expected
   end
 end

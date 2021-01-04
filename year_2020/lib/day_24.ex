@@ -3,7 +3,7 @@ defmodule Day24 do
     file_reader
     |> initial_tiles()
     |> Map.values()
-    |> Enum.count(&(&1))
+    |> Enum.count(& &1)
   end
 
   def part_two(file_reader \\ InputFile, days \\ 100) do
@@ -11,7 +11,7 @@ defmodule Day24 do
     |> initial_tiles()
     |> flip(days)
     |> Map.values()
-    |> Enum.count(&(&1))
+    |> Enum.count(& &1)
   end
 
   def initial_tiles(file_reader) do
@@ -23,6 +23,7 @@ defmodule Day24 do
   end
 
   def flip(tiles, 0), do: tiles
+
   def flip(tiles, n) do
     tiles
     |> tiles_to_check()
@@ -31,9 +32,10 @@ defmodule Day24 do
   end
 
   def new_color(pt, tiles) do
-    count = neighbors_of(pt)
-    |> Enum.map(&Map.get(tiles, &1, false))
-    |> Enum.count(&(&1))
+    count =
+      neighbors_of(pt)
+      |> Enum.map(&Map.get(tiles, &1, false))
+      |> Enum.count(& &1)
 
     color = Map.get(tiles, pt, false)
 
@@ -53,15 +55,15 @@ defmodule Day24 do
     |> Map.keys()
     |> Enum.flat_map(&neighbors_of/1)
     |> Enum.into(MapSet.new(Map.keys(tiles)))
-    |> MapSet.to_list
+    |> MapSet.to_list()
   end
 
   def walk(path), do: walk(path, {0, 0})
   def walk("", pt), do: pt
-  def walk(<<"e", rest :: binary>>, {x, y}), do: walk(rest, {x+2, y})
-  def walk(<<"se", rest :: binary>>, {x, y}), do: walk(rest, {x+1, y-1})
-  def walk(<<"ne", rest :: binary>>, {x, y}), do: walk(rest, {x+1, y+1})
-  def walk(<<"w", rest :: binary>>, {x, y}), do: walk(rest, {x-2, y})
-  def walk(<<"sw", rest :: binary>>, {x, y}), do: walk(rest, {x-1, y-1})
-  def walk(<<"nw", rest :: binary>>, {x, y}), do: walk(rest, {x-1, y+1})
+  def walk(<<"e", rest::binary>>, {x, y}), do: walk(rest, {x + 2, y})
+  def walk(<<"se", rest::binary>>, {x, y}), do: walk(rest, {x + 1, y - 1})
+  def walk(<<"ne", rest::binary>>, {x, y}), do: walk(rest, {x + 1, y + 1})
+  def walk(<<"w", rest::binary>>, {x, y}), do: walk(rest, {x - 2, y})
+  def walk(<<"sw", rest::binary>>, {x, y}), do: walk(rest, {x - 1, y - 1})
+  def walk(<<"nw", rest::binary>>, {x, y}), do: walk(rest, {x - 1, y + 1})
 end
