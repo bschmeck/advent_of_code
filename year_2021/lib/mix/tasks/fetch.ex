@@ -4,9 +4,9 @@ defmodule Mix.Tasks.Fetch do
   @shortdoc "Fetch the input and test files for AoC days"
   def run(_) do
     published_days()
-    |> Enum.flat_map(&([{&1, :input}, {&1, :test}]))
-    |> Enum.reject(&(exists?(&1)))
-    |> Enum.each(&(fetch(&1)))
+    |> Enum.flat_map(&[{&1, :input}, {&1, :test}])
+    |> Enum.reject(&exists?(&1))
+    |> Enum.each(&fetch(&1))
   end
 
   defp published_days() do
@@ -24,14 +24,15 @@ defmodule Mix.Tasks.Fetch do
     |> DateTime.to_date()
   end
 
-  defp exists?({day, :input}), do: InputFile.filename_for(day) |> File.exists?
-  defp exists?({day, :test}), do: InputTestFile.filename_for(day) |> File.exists?
+  defp exists?({day, :input}), do: InputFile.filename_for(day) |> File.exists?()
+  defp exists?({day, :test}), do: InputTestFile.filename_for(day) |> File.exists?()
 
   defp fetch({day, :input}) do
     url = "https://adventofcode.com/2021/day/#{day}/input"
     {:ok, response} = Tesla.get(url, headers: [{"cookie", cookie()}])
     day |> InputFile.filename_for() |> File.write(response.body)
   end
+
   defp fetch({day, :test}), do: day |> InputTestFile.filename_for() |> File.touch()
 
   defp cookie, do: "session=#{Application.fetch_env!(:aoc_api, :session)}"
