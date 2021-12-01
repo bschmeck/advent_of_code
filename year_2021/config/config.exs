@@ -1,3 +1,3 @@
 import Config
 
-config :aoc_api, session: System.fetch_env!("AOC_SESSION")
+config :year_2021, session: System.fetch_env!("AOC_SESSION")
