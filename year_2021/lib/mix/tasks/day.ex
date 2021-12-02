@@ -12,5 +12,10 @@ defmodule Mix.Tasks.Day do
     IO.puts("Final answer: #{x * y}")
   end
 
+  def run(["2.2"]) do
+    {x, y} = Day02.navigate_with_aim(InputFile)
+    IO.puts("Final answer: #{x * y}")
+  end
+
   def run(arg), do: Mix.raise("Day #{arg} has not been implemented.")
 end
