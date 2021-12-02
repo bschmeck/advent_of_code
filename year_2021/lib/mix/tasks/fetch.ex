@@ -35,5 +35,5 @@ defmodule Mix.Tasks.Fetch do
 
   defp fetch({day, :test}), do: day |> InputTestFile.filename_for() |> File.touch()
 
-  defp cookie, do: "session=#{Application.fetch_env!(:aoc_api, :session)}"
+  defp cookie, do: "session=#{Application.fetch_env!(:year_2021, :session)}"
 end
