@@ -17,5 +17,10 @@ defmodule Mix.Tasks.Day do
     IO.puts("Final answer: #{x * y}")
   end
 
+  def run(["3.1"]) do
+    {gamma, epsilon} = Day03.part_one(InputFile)
+    IO.puts("Final answer: #{gamma * epsilon}")
+  end
+
   def run(arg), do: Mix.raise("Day #{arg} has not been implemented.")
 end
