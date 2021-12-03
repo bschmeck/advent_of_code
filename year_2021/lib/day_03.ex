@@ -20,8 +20,8 @@ defmodule Day03 do
   defp rating([elt], _comp_fn, n) do
     n
     |> Enum.reverse(elt)
-    |> encode
-    |> decode
+    |> Enum.join()
+    |> String.to_integer(2)
   end
 
   defp rating(values, comp_fn, n) do
