@@ -1,50 +1,43 @@
 defmodule Day03 do
   def part_one(input) do
-    bits = gamma(input)
+    bits =
+      input
+      |> values_from()
+      |> gamma()
+
     {decode(bits), decode(flip(bits))}
   end
 
   def part_two(input) do
-    {oxygen_rating(input), co2_rating(input)}
+    values = values_from(input)
+    o2 = oxygen_rating(values)
+    co2 = co2_rating(values)
+    {o2, co2}
   end
 
-  def oxygen_rating(input) do
-    3
-    |> input.contents_of(:stream)
-    |> Stream.map(&String.trim/1)
-    |> Stream.map(&String.split(&1, "", trim: true))
-    |> do_oxygen_rating(0)
-  end
+  defp oxygen_rating(values, n \\ 0)
+  defp oxygen_rating([elt], _n), do: elt |> encode |> decode
 
-  def co2_rating(input) do
-    3
-    |> input.contents_of(:stream)
-    |> Stream.map(&String.trim/1)
-    |> Stream.map(&String.split(&1, "", trim: true))
-    |> do_co2_rating(0)
-  end
-
-  defp do_oxygen_rating([elt], _n), do: elt |> encode |> decode
-
-  defp do_oxygen_rating(values, n) do
+  defp oxygen_rating(values, n) do
     %{"0" => zeroes, "1" => ones} = Enum.group_by(values, fn arr -> Enum.fetch!(arr, n) end)
 
     if Enum.count(ones) >= Enum.count(zeroes) do
-      do_oxygen_rating(ones, n + 1)
+      oxygen_rating(ones, n + 1)
     else
-      do_oxygen_rating(zeroes, n + 1)
+      oxygen_rating(zeroes, n + 1)
     end
   end
 
-  defp do_co2_rating([elt], _n), do: elt |> encode |> decode
+  defp co2_rating(values, n \\ 0)
+  defp co2_rating([elt], _n), do: elt |> encode |> decode
 
-  defp do_co2_rating(values, n) do
+  defp co2_rating(values, n) do
     %{"0" => zeroes, "1" => ones} = Enum.group_by(values, fn arr -> Enum.fetch!(arr, n) end)
 
     if Enum.count(ones) < Enum.count(zeroes) do
-      do_co2_rating(ones, n + 1)
+      co2_rating(ones, n + 1)
     else
-      do_co2_rating(zeroes, n + 1)
+      co2_rating(zeroes, n + 1)
     end
   end
 
@@ -55,11 +48,8 @@ defmodule Day03 do
     end)
   end
 
-  defp gamma(input) do
-    3
-    |> input.contents_of(:stream)
-    |> Stream.map(&String.trim/1)
-    |> Stream.map(&String.split(&1, "", trim: true))
+  defp gamma(values) do
+    values
     |> Stream.map(&encode/1)
     |> Enum.reduce(&sum_cols/2)
   end
@@ -78,5 +68,12 @@ defmodule Day03 do
   defp sum_cols(a, b) do
     Enum.zip(a, b)
     |> Enum.map(fn {x, y} -> x + y end)
+  end
+
+  defp values_from(input) do
+    3
+    |> input.contents_of(:stream)
+    |> Stream.map(&String.trim/1)
+    |> Stream.map(&String.split(&1, "", trim: true))
   end
 end

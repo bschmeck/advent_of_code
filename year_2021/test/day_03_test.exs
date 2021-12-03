@@ -12,10 +12,10 @@ defmodule Day03Test do
   end
 
   test "it can compute the oxygen rating" do
-    assert Day03.oxygen_rating(InputTestFile) == 23
+    assert {23, _} = Day03.part_two(InputTestFile)
   end
 
   test "it can compute the CO2 rating" do
-    assert Day03.co2_rating(InputTestFile) == 10
+    assert {_, 10} = Day03.part_two(InputTestFile)
   end
 end
