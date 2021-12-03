@@ -8,6 +8,21 @@ defmodule Day03 do
     {decode(bits), decode(flip(bits))}
   end
 
+  def part_one_nx(input) do
+    input
+    |> values_from()
+    |> Stream.map(fn arr -> Enum.map(arr, &String.to_integer/1) end)
+    |> Stream.zip()
+    |> Stream.map(&Tuple.to_list/1)
+    |> Stream.map(&Nx.tensor/1)
+    |> Stream.map(&Nx.mean/1)
+    |> Stream.map(&Nx.to_scalar/1)
+    |> Enum.reduce({0, 0}, fn
+      bit, {g, e} when bit < 0.5 -> {g * 2, e * 2 + 1}
+      _, {g, e} -> {g * 2 + 1, e * 2}
+    end)
+  end
+
   def part_two(input) do
     values = values_from(input)
     o2 = rating(values, fn ones, zeroes -> Enum.count(ones) >= Enum.count(zeroes) end)
