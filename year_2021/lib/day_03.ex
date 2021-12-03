@@ -40,7 +40,7 @@ defmodule Day03 do
   end
 
   defp rating(values, comp_fn, n) do
-    %{"0" => zeroes, "1" => ones} = Enum.group_by(values, &hd/1)
+    {zeroes, ones} = Enum.split_with(values, fn [bit | _] -> bit == "0" end)
 
     if comp_fn.(ones, zeroes) do
       rating(Enum.map(ones, &tl/1), comp_fn, ["1" | n])
