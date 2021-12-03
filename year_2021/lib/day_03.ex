@@ -10,34 +10,27 @@ defmodule Day03 do
 
   def part_two(input) do
     values = values_from(input)
-    o2 = oxygen_rating(values)
-    co2 = co2_rating(values)
+    o2 = rating(values, fn ones, zeroes -> Enum.count(ones) >= Enum.count(zeroes) end)
+    co2 = rating(values, fn ones, zeroes -> Enum.count(ones) < Enum.count(zeroes) end)
     {o2, co2}
   end
 
-  defp oxygen_rating(values, n \\ 0)
-  defp oxygen_rating([elt], _n), do: elt |> encode |> decode
+  defp rating(values, comp_fn, n \\ [])
 
-  defp oxygen_rating(values, n) do
-    %{"0" => zeroes, "1" => ones} = Enum.group_by(values, fn arr -> Enum.fetch!(arr, n) end)
-
-    if Enum.count(ones) >= Enum.count(zeroes) do
-      oxygen_rating(ones, n + 1)
-    else
-      oxygen_rating(zeroes, n + 1)
-    end
+  defp rating([elt], _comp_fn, n) do
+    n
+    |> Enum.reverse(elt)
+    |> encode
+    |> decode
   end
 
-  defp co2_rating(values, n \\ 0)
-  defp co2_rating([elt], _n), do: elt |> encode |> decode
+  defp rating(values, comp_fn, n) do
+    %{"0" => zeroes, "1" => ones} = Enum.group_by(values, &hd/1)
 
-  defp co2_rating(values, n) do
-    %{"0" => zeroes, "1" => ones} = Enum.group_by(values, fn arr -> Enum.fetch!(arr, n) end)
-
-    if Enum.count(ones) < Enum.count(zeroes) do
-      co2_rating(ones, n + 1)
+    if comp_fn.(ones, zeroes) do
+      rating(Enum.map(ones, &tl/1), comp_fn, ["1" | n])
     else
-      co2_rating(zeroes, n + 1)
+      rating(Enum.map(zeroes, &tl/1), comp_fn, ["0" | n])
     end
   end
 
