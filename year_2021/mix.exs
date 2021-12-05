@@ -25,7 +25,8 @@ defmodule Year2021.MixProject do
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:tesla, "~> 1.4"},
       {:hackney, "~> 1.17"},
-      {:nx, github: "elixir-nx/nx", sparse: "nx"}
+      {:nx, github: "elixir-nx/nx", sparse: "nx"},
+      {:nimble_parsec, "~> 1.2"}
     ]
   end
 end

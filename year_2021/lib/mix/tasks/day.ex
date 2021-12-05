@@ -27,5 +27,8 @@ defmodule Mix.Tasks.Day do
     IO.puts("Final answer: #{o2 * co2}")
   end
 
+  def run(["5.1"]), do: Day05.part_one(InputFile) |> IO.inspect()
+  def run(["5.2"]), do: Day05.part_two(InputFile) |> IO.inspect()
+
   def run(arg), do: Mix.raise("Day #{arg} has not been implemented.")
 end
