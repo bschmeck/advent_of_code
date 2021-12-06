@@ -28,6 +28,7 @@ defmodule Mix.Tasks.Day do
   end
 
   def run(["4.1"]), do: Day04.part_one(InputFile) |> IO.inspect()
+  def run(["4.2"]), do: Day04.part_two(InputFile) |> IO.inspect()
   def run(["5.1"]), do: Day05.part_one(InputFile) |> IO.inspect()
   def run(["5.2"]), do: Day05.part_two(InputFile) |> IO.inspect()
 
