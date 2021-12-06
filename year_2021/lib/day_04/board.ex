@@ -1,6 +1,5 @@
 defmodule Day04.Board do
   use Bitwise
-  use GenServer
 
   defstruct state: 0, positions: %{}
 
@@ -27,6 +26,19 @@ defmodule Day04.Board do
     %__MODULE__{positions: Map.delete(board.positions, number), state: board.state ||| mask}
   end
 
+  def call_all(board, numbers) do
+    numbers
+    |> Enum.reduce_while({board, 1}, fn n, {b, i} ->
+      new_board = call(b, n)
+
+      if winning?(new_board) do
+        {:halt, {i, String.to_integer(n) * unmarked_sum(new_board)}}
+      else
+        {:cont, {new_board, i + 1}}
+      end
+    end)
+  end
+
   def winning?(%__MODULE__{state: s}) when (s &&& @row1) == @row1, do: true
   def winning?(%__MODULE__{state: s}) when (s &&& @row2) == @row2, do: true
   def winning?(%__MODULE__{state: s}) when (s &&& @row3) == @row3, do: true
@@ -50,19 +62,5 @@ defmodule Day04.Board do
 
   defp parse_positions([n | rest], positions, mask) do
     parse_positions(rest, Map.put(positions, n, mask), mask <<< 1)
-  end
-
-  @impl true
-  def init(lines), do: {:ok, parse(lines)}
-
-  @impl true
-  def handle_call({:place, n}, _from, %__MODULE__{} = board) do
-    new_board = call(board, n)
-
-    if winning?(new_board) do
-      {:reply, {:won, unmarked_sum(new_board)}, new_board}
-    else
-      {:reply, :ok, new_board}
-    end
   end
 end

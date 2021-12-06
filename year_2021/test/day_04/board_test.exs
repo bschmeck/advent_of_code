@@ -72,4 +72,14 @@ defmodule Day04.BoardTest do
     assert Day04.Board.winning?(board)
     assert Day04.Board.unmarked_sum(board) == 188
   end
+
+  test "it computes the number of steps and final score of a winning board" do
+    board =
+      Day04.Board.parse(
+        "14 21 17 24  4\n10 16 15  9 19\n18  8 23 26 20\n22 11 13  6  5\n 2  0 12  3  7\n"
+      )
+
+    nums = ~w[7 4 9 5 11 17 23 2 0 14 21 24]
+    assert {12, 4512} = Day04.Board.call_all(board, nums)
+  end
 end
