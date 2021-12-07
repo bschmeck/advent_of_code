@@ -1,37 +1,31 @@
 defmodule Day07 do
   def part_one(input) do
-    positions =
-      7
-      |> input.contents_of()
-      |> String.trim()
-      |> String.split(",")
-      |> Enum.map(&String.to_integer/1)
-      |> Enum.sort()
-
-    positions
-    |> modes_of()
-    |> Enum.map(fn mode ->
-      positions
-      |> Enum.map(fn pos -> abs(mode - pos) end)
-      |> Enum.reduce(&Kernel.+/2)
-    end)
-    |> Enum.min()
+    input
+    |> positions()
+    |> calculate(&modes_of/1, &linear_cost/2)
   end
 
   def part_two(input) do
-    positions =
-      7
-      |> input.contents_of()
-      |> String.trim()
-      |> String.split(",")
-      |> Enum.map(&String.to_integer/1)
-      |> Enum.sort()
+    input
+    |> positions()
+    |> calculate(&avgs_of/1, &increasing_cost/2)
+  end
 
+  defp positions(input) do
+    7
+    |> input.contents_of()
+    |> String.trim()
+    |> String.split(",")
+    |> Enum.map(&String.to_integer/1)
+    |> Enum.sort()
+  end
+
+  defp calculate(positions, target_fn, cost_fn) do
     positions
-    |> avgs_of()
-    |> Enum.map(fn avg ->
+    |> target_fn.()
+    |> Enum.map(fn target ->
       positions
-      |> Enum.map(fn pos -> cost(pos, avg) end)
+      |> Enum.map(fn pos -> cost_fn.(pos, target) end)
       |> Enum.reduce(&Kernel.+/2)
     end)
     |> Enum.min()
@@ -54,7 +48,9 @@ defmodule Day07 do
     [floor, floor + 1]
   end
 
-  defp cost(from, to) do
+  defp linear_cost(from, to), do: abs(from - to)
+
+  defp increasing_cost(from, to) do
     len = abs(from - to)
 
     case rem(len, 2) do
