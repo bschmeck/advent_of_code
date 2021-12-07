@@ -52,10 +52,6 @@ defmodule Day07 do
 
   defp increasing_cost(from, to) do
     len = abs(from - to)
-
-    case rem(len, 2) do
-      0 -> (1 + len) * len / 2
-      1 -> (1 + len) * (len - 1) / 2 + (len + 1) / 2
-    end
+    div(len + len * len, 2)
   end
 end
