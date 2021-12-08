@@ -23,10 +23,9 @@ defmodule Day08 do
   }
 
   def part_one(input) do
-    8
-    |> input.contents_of(:stream)
-    |> Enum.map(&String.trim/1)
-    |> Enum.map(fn line -> line |> String.split(" | ") |> Enum.at(1) end)
+    input
+    |> lines
+    |> Enum.map(&Enum.at(&1, 1))
     |> Enum.flat_map(&String.split/1)
     |> Enum.frequencies_by(&String.length/1)
     |> Map.take([2, 3, 4, 7])
@@ -35,10 +34,8 @@ defmodule Day08 do
   end
 
   def part_two(input) do
-    8
-    |> input.contents_of(:stream)
-    |> Enum.map(&String.trim/1)
-    |> Enum.map(fn line -> line |> String.split(" | ") end)
+    input
+    |> lines
     |> Enum.map(fn [signals, display] ->
       mapping = signals |> String.split() |> infer()
 
@@ -79,5 +76,12 @@ defmodule Day08 do
     |> Enum.reduce(fn m1, m2 -> Map.merge(m1, m2, fn _k, v1, v2 -> Enum.sort(v1 ++ v2) end) end)
     |> Enum.map(fn {k, v} -> {k, @translator[v]} end)
     |> Enum.into(%{})
+  end
+
+  defp lines(input) do
+    8
+    |> input.contents_of(:stream)
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&String.split(&1, " | "))
   end
 end
