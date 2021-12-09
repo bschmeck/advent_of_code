@@ -3,15 +3,12 @@ defmodule Day09 do
     map = map(input)
 
     map
-    |> Map.keys()
-    |> Enum.filter(fn pos -> lowest?(pos, map) end)
-    |> Enum.map(fn pos -> map[pos] + 1 end)
+    |> Enum.filter(fn {pos, value} -> lowest?(pos, value, map) end)
+    |> Enum.map(fn {_pos, value} -> value + 1 end)
     |> Enum.reduce(&Kernel.+/2)
   end
 
-  defp lowest?(pos, map) do
-    value = map[pos]
-
+  defp lowest?(pos, value, map) do
     pos
     |> neighbors()
     |> Enum.map(fn n -> Map.get(map, n, 10) end)
