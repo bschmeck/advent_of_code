@@ -37,6 +37,8 @@ defmodule Mix.Tasks.Day do
   def run(["7.2"]), do: Day07.part_two(InputFile) |> IO.inspect()
   def run(["8.1"]), do: Day08.part_one(InputFile) |> IO.inspect()
   def run(["8.2"]), do: Day08.part_two(InputFile) |> IO.inspect()
+  def run(["9.1"]), do: Day09.part_one(InputFile) |> IO.inspect()
+  def run(["9.2"]), do: Day09.part_two(InputFile) |> IO.inspect()
 
   def run(arg), do: Mix.raise("Day #{arg} has not been implemented.")
 end
