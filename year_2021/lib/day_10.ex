@@ -28,36 +28,29 @@ defmodule Day10 do
     |> middle()
   end
 
-  def parse_line(str) do
-    str
-    |> String.codepoints()
-    |> do_parse_line([])
-  end
+  def parse_line(str), do: do_parse_line(str, [])
 
-  defp do_parse_line(["(" | rest], stack), do: do_parse_line(rest, ["(" | stack])
-  defp do_parse_line(["[" | rest], stack), do: do_parse_line(rest, ["[" | stack])
-  defp do_parse_line(["{" | rest], stack), do: do_parse_line(rest, ["{" | stack])
-  defp do_parse_line(["<" | rest], stack), do: do_parse_line(rest, ["<" | stack])
-  defp do_parse_line([")" | rest], ["(" | stack]), do: do_parse_line(rest, stack)
-  defp do_parse_line(["]" | rest], ["[" | stack]), do: do_parse_line(rest, stack)
-  defp do_parse_line(["}" | rest], ["{" | stack]), do: do_parse_line(rest, stack)
-  defp do_parse_line([">" | rest], ["<" | stack]), do: do_parse_line(rest, stack)
-  defp do_parse_line([], stack), do: {:incomplete, stack}
-  defp do_parse_line([c | _rest], _stack), do: {:corrupted, c}
+  defp do_parse_line(<<head, rest::binary>>, [head | stack]), do: do_parse_line(rest, stack)
+  defp do_parse_line(<<?(, rest::binary>>, stack), do: do_parse_line(rest, [?) | stack])
+  defp do_parse_line(<<?[, rest::binary>>, stack), do: do_parse_line(rest, [?] | stack])
+  defp do_parse_line(<<?{, rest::binary>>, stack), do: do_parse_line(rest, [?} | stack])
+  defp do_parse_line(<<?<, rest::binary>>, stack), do: do_parse_line(rest, [?> | stack])
+  defp do_parse_line("", stack), do: {:incomplete, stack}
+  defp do_parse_line(<<c, _rest::binary>>, _stack), do: {:corrupted, c}
 
-  defp corrupted_score(")"), do: 3
-  defp corrupted_score("]"), do: 57
-  defp corrupted_score("}"), do: 1197
-  defp corrupted_score(">"), do: 25137
+  defp corrupted_score(?)), do: 3
+  defp corrupted_score(?]), do: 57
+  defp corrupted_score(?}), do: 1197
+  defp corrupted_score(?>), do: 25137
 
   defp autocomplete_score(remaining), do: autocomplete_score(remaining, 0)
   defp autocomplete_score([], total), do: total
   defp autocomplete_score([char | rest], total), do: autocomplete_score(rest, total * 5 + autocomplete_char_score(char))
 
-  defp autocomplete_char_score("("), do: 1
-  defp autocomplete_char_score("["), do: 2
-  defp autocomplete_char_score("{"), do: 3
-  defp autocomplete_char_score("<"), do: 4
+  defp autocomplete_char_score(?)), do: 1
+  defp autocomplete_char_score(?]), do: 2
+  defp autocomplete_char_score(?}), do: 3
+  defp autocomplete_char_score(?>), do: 4
 
   defp middle(l) do
     midpoint = div(Enum.count(l) - 1, 2)

@@ -2,8 +2,8 @@ defmodule Day10Test do
   use ExUnit.Case, async: true
 
   test "it detects corrupted characters" do
-    assert Day10.parse_line("(>") == {:corrupted, ">"}
-    assert Day10.parse_line("{([(<{}[<>[]}>{[]{[(<()>") == {:corrupted, "}"}
+    assert Day10.parse_line("(>") == {:corrupted, ?>}
+    assert Day10.parse_line("{([(<{}[<>[]}>{[]{[(<()>") == {:corrupted, ?}}
   end
 
   test "it computes the score for a file" do
