@@ -45,7 +45,9 @@ defmodule Day10 do
 
   defp autocomplete_score(remaining), do: autocomplete_score(remaining, 0)
   defp autocomplete_score([], total), do: total
-  defp autocomplete_score([char | rest], total), do: autocomplete_score(rest, total * 5 + autocomplete_char_score(char))
+
+  defp autocomplete_score([char | rest], total),
+    do: autocomplete_score(rest, total * 5 + autocomplete_char_score(char))
 
   defp autocomplete_char_score(?)), do: 1
   defp autocomplete_char_score(?]), do: 2

@@ -11,6 +11,6 @@ defmodule Day10Test do
   end
 
   test "it computes the score of autocompletions" do
-    assert Day10.part_two(InputTestFile) == 288957
+    assert Day10.part_two(InputTestFile) == 288_957
   end
 end

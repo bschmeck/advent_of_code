@@ -27,6 +27,7 @@ defmodule Day11 do
   end
 
   defp step(_octopi, 0, total), do: total
+
   defp step(octopi, n, total) do
     {octopi, flashed} =
       octopi
@@ -45,14 +46,16 @@ defmodule Day11 do
   end
 
   defp flash(octopi) do
-    to_flash = octopi
-    |> Enum.filter(fn {_k, v} -> v == 10 end)
-    |> Enum.map(fn {k, _v} -> k end)
+    to_flash =
+      octopi
+      |> Enum.filter(fn {_k, v} -> v == 10 end)
+      |> Enum.map(fn {k, _v} -> k end)
 
     do_flash(octopi, to_flash, [])
   end
 
   defp do_flash(octopi, [], flashed), do: {octopi, flashed}
+
   defp do_flash(octopi, [pos | rest], flashed) do
     affected = pos |> neighbors() |> Enum.filter(fn k -> Map.has_key?(octopi, k) end)
     octopi = Enum.reduce(affected, octopi, fn p, o -> Map.update!(o, p, fn v -> v + 1 end) end)
@@ -69,7 +72,7 @@ defmodule Day11 do
       {x - 1, y},
       {x, y},
       {x + 1, y},
-      {x - 1, y+1},
+      {x - 1, y + 1},
       {x, y + 1},
       {x + 1, y + 1}
     ]
