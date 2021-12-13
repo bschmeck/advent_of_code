@@ -4,7 +4,14 @@ defmodule Day12 do
   def part_one(input) do
     input
     |> graph_from()
-    |> unique_paths([Path.new()])
+    |> unique_paths([Path.new()], :part_one)
+    |> Enum.count()
+  end
+
+  def part_two(input) do
+    input
+    |> graph_from()
+    |> unique_paths([Path.new()], :part_two)
     |> Enum.count()
   end
 
@@ -17,37 +24,47 @@ defmodule Day12 do
     |> Map.put("end", [])
   end
 
-  def add_path(graph, src, "end"), do: Map.update(graph, src, ["end"], fn dests -> ["end" | dests] end)
-  def add_path(graph, "end", src), do: Map.update(graph, src, ["end"], fn dests -> ["end" | dests] end)
-  def add_path(graph, "start", dest), do: Map.update(graph, "start", [dest], fn dests -> [dest | dests] end)
-  def add_path(graph, dest, "start"), do: Map.update(graph, "start", [dest], fn dests -> [dest | dests] end)
+  def add_path(graph, src, "end"),
+    do: Map.update(graph, src, ["end"], fn dests -> ["end" | dests] end)
+
+  def add_path(graph, "end", src),
+    do: Map.update(graph, src, ["end"], fn dests -> ["end" | dests] end)
+
+  def add_path(graph, "start", dest),
+    do: Map.update(graph, "start", [dest], fn dests -> [dest | dests] end)
+
+  def add_path(graph, dest, "start"),
+    do: Map.update(graph, "start", [dest], fn dests -> [dest | dests] end)
+
   def add_path(graph, src, dest) do
     graph
     |> Map.update(src, [dest], fn dests -> [dest | dests] end)
     |> Map.update(dest, [src], fn dests -> [src | dests] end)
   end
 
-  def unique_paths(graph, paths) do
+  def unique_paths(graph, paths, constraint) do
     if Enum.all?(paths, &Path.complete?/1) do
       paths
     else
-      updated = paths
-      |> Enum.flat_map(fn p ->
-        if Path.complete?(p) do
-          [p]
-        else
-          graph
-          |> Map.fetch!(p.cave)
-          |> Enum.flat_map(fn next_cave ->
-            if Path.can_visit?(p, next_cave) do
-              [Path.visit(p, next_cave)]
-            else
-              []
-            end
-          end)
-        end
-      end)
-      unique_paths(graph, updated)
+      updated =
+        paths
+        |> Enum.flat_map(fn p ->
+          if Path.complete?(p) do
+            [p]
+          else
+            graph
+            |> Map.fetch!(p.cave)
+            |> Enum.flat_map(fn next_cave ->
+              if Path.can_visit?(p, next_cave, constraint) do
+                [Path.visit(p, next_cave)]
+              else
+                []
+              end
+            end)
+          end
+        end)
+
+      unique_paths(graph, updated, constraint)
     end
   end
 end
