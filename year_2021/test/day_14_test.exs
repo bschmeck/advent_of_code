@@ -6,6 +6,6 @@ defmodule Day14Test do
   end
 
   test "it computes the difference after 40 steps" do
-    assert Day14.part_two(InputTestFile) == 2188189693529
+    assert Day14.part_two(InputTestFile) == 2_188_189_693_529
   end
 end
