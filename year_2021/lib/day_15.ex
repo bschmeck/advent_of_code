@@ -20,27 +20,38 @@ defmodule Day15 do
     goal_y = grid |> Map.keys() |> Enum.map(fn {_x, y} -> y end) |> Enum.max()
     goal = {goal_x, goal_y}
 
-    route = safest(grid, goal, [Route.new()])
+    route = safest(grid, goal, [Route.new(goal)])
 
     route.total_risk
   end
 
-  defp safest(_grid, goal, [%Route{current_node: goal} = route | _rest]), do: route
+  defp safest(_grid, goal, [%Route{current_node: goal} = route | rest]) do
+    # IO.inspect(rest)
+    # nodes = Enum.map(rest, &(&1.current_node))
+    # IO.puts "#{inspect Enum.count(rest)} other routes and #{nodes |> Enum.uniq |> Enum.count} unique locations"
+    # dupes = Enum.frequencies(nodes) |> Enum.filter(fn {k, v} -> v > 1 end) |> Enum.map(fn {k, v} -> k end) |> Enum.take(5) |> Enum.into(MapSet.new())
+    # IO.inspect Enum.filter(rest, fn r -> MapSet.member?(dupes, r.current_node) end)
+    route
+  end
 
   defp safest(grid, goal, [route | rest]) do
-    IO.puts("#{inspect(route.current_node)} #{route.total_risk} #{Enum.count(rest)}")
+    # IO.inspect(routes)
+    # IO.puts("#{inspect(route.current_node)} #{route.total_risk} #{Enum.count(rest)}")
 
-    steps =
+    routes =
       [{0, 1}, {0, -1}, {1, 0}, {-1, 0}]
       |> Enum.map(fn {x_adj, y_adj} ->
         {elem(route.current_node, 0) + x_adj, elem(route.current_node, 1) + y_adj}
       end)
       |> Enum.filter(fn pos -> Map.has_key?(grid, pos) end)
       |> Enum.reject(fn pos -> Route.visited?(route, pos) end)
-      |> Enum.map(fn pos -> Route.move(route, pos, Map.fetch!(grid, pos)) end)
-      |> Enum.sort_by(& &1.total_risk)
+      |> Enum.map(fn pos -> Route.move(route, pos, Map.fetch!(grid, pos), goal) end)
+      |> Enum.sort_by(& &1.estimate)
+      # |> IO.inspect
+      |> insert(rest, [])
 
-    safest(grid, goal, insert(steps, rest, []))
+    # IO.puts "===================="
+    safest(grid, goal, routes)
   end
 
   defp insert([], existing, routes), do: Enum.reverse(routes) ++ existing
@@ -56,18 +67,21 @@ defmodule Day15 do
   end
 
   defp insert(
-         [%Route{total_risk: risk} = step | steps],
-         [%Route{total_risk: risk2} | _rest] = existing,
+         [%Route{estimate: risk} = step | steps],
+         [%Route{estimate: risk2} | _rest] = existing,
          routes
        )
-       when risk < risk2 do
-    # We found a cheaper route to pos, drop any existing routes
+       when risk <= risk2 do
     insert(
       steps,
+      # |> IO.inspect,
       Enum.reject(existing, fn r -> r.current_node == step.current_node end),
       [step | routes]
     )
   end
 
-  defp insert(steps, [existing | rest], routes), do: insert(steps, rest, [existing | routes])
+  defp insert(steps, [existing | rest], routes) do
+    # IO.puts "Route with #{existing.estimate} is cheaper."
+    insert(steps, rest, [existing | routes])
+  end
 end
