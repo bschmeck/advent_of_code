@@ -54,68 +54,37 @@ defmodule Day16 do
     |> then(fn %{value: v} -> v.() end)
   end
 
-  def value_fn(ops, 0) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> Enum.reduce(&Kernel.+/2)
-    end
-  end
+  def value_fn(ops, 0), do: values(ops, fn acc -> Enum.reduce(acc, &Kernel.+/2) end)
+  def value_fn(ops, 1), do: values(ops, fn acc -> Enum.reduce(acc, &Kernel.*/2) end)
+  def value_fn(ops, 2), do: values(ops, fn acc -> Enum.min(acc) end)
+  def value_fn(ops, 3), do: values(ops, fn acc -> Enum.max(acc) end)
 
-  def value_fn(ops, 1) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> Enum.reduce(&Kernel.*/2)
-    end
-  end
-
-  def value_fn(ops, 2) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> Enum.min()
-    end
-  end
-
-  def value_fn(ops, 3) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> Enum.max()
-    end
-  end
-
-  def value_fn(ops, 5) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> then(fn
+  def value_fn(ops, 5),
+    do:
+      values(ops, fn
         [a, b] when a > b -> 1
         _ -> 0
       end)
-    end
-  end
 
-  def value_fn(ops, 6) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> then(fn
+  def value_fn(ops, 6),
+    do:
+      values(ops, fn
         [a, b] when a < b -> 1
         _ -> 0
       end)
-    end
-  end
 
-  def value_fn(ops, 7) do
-    fn ->
-      ops
-      |> Enum.map(fn %{value: v} -> v.() end)
-      |> then(fn
+  def value_fn(ops, 7),
+    do:
+      values(ops, fn
         [a, a] -> 1
         _ -> 0
       end)
+
+  defp values(ops, func) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> func.()
     end
   end
 
