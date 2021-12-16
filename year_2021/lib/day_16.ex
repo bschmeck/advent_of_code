@@ -1,6 +1,4 @@
 defmodule Day16 do
-  use Bitwise
-
   def version_sum(str) do
     str
     |> parse()
