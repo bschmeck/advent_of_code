@@ -2,15 +2,7 @@ defmodule Day16 do
   def version_sum(str) do
     str
     |> parse()
-    |> versions([])
-    |> Enum.reduce(&Kernel.+/2)
-  end
-
-  defp versions(%{version: v, type_id: 4}, acc), do: [v | acc]
-
-  defp versions(%{version: v, subpackets: subs}, acc) do
-    subs
-    |> Enum.reduce([v | acc], &versions(&1, &2))
+    |> then(fn %{version: v} -> v end)
   end
 
   def parse(str) when is_binary(str) do
@@ -28,7 +20,7 @@ defmodule Day16 do
     type_id = 4
 
     {bits, value} = parse_literal(rest, [])
-    {bits, %{version: version, type_id: type_id, value: value}}
+    {bits, %{version: version, type_id: type_id, value: fn -> value end}}
   end
 
   def parse([v1, v2, v3, id1, id2, id3, 0 | rest]) do
@@ -38,7 +30,11 @@ defmodule Day16 do
     length = Integer.undigits(value, 2)
     {raw, rest} = Enum.split(rest, length)
 
-    {rest, %{version: version, type_id: type_id, subpackets: parse_all(raw, [])}}
+    ops = raw |> parse_all([])
+    version_sum = ops |> Enum.map(fn %{version: v} -> v end) |> Enum.reduce(version, &Kernel.+/2)
+    value = ops |> value_fn(type_id)
+
+    {rest, %{version: version_sum, type_id: type_id, value: value}}
   end
 
   def parse([v1, v2, v3, id1, id2, id3, 1 | rest]) do
@@ -46,53 +42,81 @@ defmodule Day16 do
     type_id = Integer.undigits([id1, id2, id3], 2)
     {value, rest} = Enum.split(rest, 11)
     count = Integer.undigits(value, 2)
-    {rest, packets} = parse_n(rest, count, [])
+    {rest, ops} = parse_n(rest, count, [])
+    version_sum = ops |> Enum.map(fn %{version: v} -> v end) |> Enum.reduce(version, &Kernel.+/2)
 
-    {rest, %{version: version, type_id: type_id, subpackets: packets}}
+    {rest, %{version: version_sum, type_id: type_id, value: value_fn(ops, type_id)}}
   end
 
   def compute(str) when is_binary(str) do
     str
     |> parse()
-    |> compute()
+    |> then(fn %{value: v} -> v.() end)
   end
 
-  def compute(%{type_id: 4, value: v}), do: v
-
-  def compute(%{type_id: 0, subpackets: subs}),
-    do: subs |> Enum.map(&compute/1) |> Enum.reduce(&Kernel.+/2)
-
-  def compute(%{type_id: 1, subpackets: subs}),
-    do: subs |> Enum.map(&compute/1) |> Enum.reduce(&Kernel.*/2)
-
-  def compute(%{type_id: 2, subpackets: subs}), do: subs |> Enum.map(&compute/1) |> Enum.min()
-  def compute(%{type_id: 3, subpackets: subs}), do: subs |> Enum.map(&compute/1) |> Enum.max()
-
-  def compute(%{type_id: 5, subpackets: subs}) do
-    subs
-    |> Enum.map(&compute/1)
-    |> then(fn
-      [a, b] when a > b -> 1
-      _ -> 0
-    end)
+  def value_fn(ops, 0) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> Enum.reduce(&Kernel.+/2)
+    end
   end
 
-  def compute(%{type_id: 6, subpackets: subs}) do
-    subs
-    |> Enum.map(&compute/1)
-    |> then(fn
-      [a, b] when a < b -> 1
-      _ -> 0
-    end)
+  def value_fn(ops, 1) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> Enum.reduce(&Kernel.*/2)
+    end
   end
 
-  def compute(%{type_id: 7, subpackets: subs}) do
-    subs
-    |> Enum.map(&compute/1)
-    |> then(fn
-      [a, a] -> 1
-      _ -> 0
-    end)
+  def value_fn(ops, 2) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> Enum.min()
+    end
+  end
+
+  def value_fn(ops, 3) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> Enum.max()
+    end
+  end
+
+  def value_fn(ops, 5) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> then(fn
+        [a, b] when a > b -> 1
+        _ -> 0
+      end)
+    end
+  end
+
+  def value_fn(ops, 6) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> then(fn
+        [a, b] when a < b -> 1
+        _ -> 0
+      end)
+    end
+  end
+
+  def value_fn(ops, 7) do
+    fn ->
+      ops
+      |> Enum.map(fn %{value: v} -> v.() end)
+      |> then(fn
+        [a, a] -> 1
+        _ -> 0
+      end)
+    end
   end
 
   defp parse_n(bits, 0, instrs), do: {bits, Enum.reverse(instrs)}
