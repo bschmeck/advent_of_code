@@ -11,8 +11,7 @@ defmodule Day17 do
     for x_velo <- find_x_velos(x_range), y_velo <- find_y_velos(y_range) do
       {x_velo, y_velo}
     end
-    |> Enum.filter(fn velo -> in_target?(velo, x_range, y_range) end)
-    |> Enum.count()
+    |> Enum.count(fn velo -> in_target?(velo, x_range, y_range) end)
   end
 
   defp parse(input) do
