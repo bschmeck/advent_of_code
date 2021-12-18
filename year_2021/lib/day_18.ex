@@ -5,6 +5,21 @@ defmodule Day18 do
     |> magnitude()
   end
 
+  def part_two(input) do
+    18
+    |> input.contents_of(:stream)
+    |> Enum.map(&String.trim/1)
+    |> Enum.map(&parse/1)
+    |> permutations()
+    |> Enum.map(fn [a, b] -> add(a, b) end)
+    |> Enum.map(&magnitude/1)
+    |> Enum.max()
+  end
+
+  def permutations(list) do
+    for h <- list, t <- list -- [h], do: [h, t]
+  end
+
   def magnitude(l) when is_binary(l), do: l |> parse() |> magnitude()
   def magnitude(l), do: l |> do_magnitude() |> elem(0)
 

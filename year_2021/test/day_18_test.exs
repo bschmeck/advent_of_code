@@ -5,6 +5,14 @@ defmodule Day18Test do
     assert Day18.part_one(InputTestFile) == 4140
   end
 
+  test "it can compute the largest possible magnitude" do
+    assert Day18.part_two(InputTestFile) == 3993
+  end
+
+  test "it can build permutations" do
+    assert Day18.permutations([1, 2, 3]) == [[1, 2], [1, 3], [2, 1], [2, 3], [3, 1], [3, 2]]
+  end
+
   test "it can compute the magnitude of numbers" do
     assert Day18.magnitude("[9,1]") == 29
     assert Day18.magnitude("[1,9]") == 21
