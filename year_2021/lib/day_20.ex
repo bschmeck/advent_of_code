@@ -5,8 +5,15 @@ defmodule Day20 do
     {algo, image} = parse(input)
 
     image
-    |> Image.enhance(algo)
-    |> Image.enhance(algo)
+    |> enhance(algo, 2)
+    |> Image.count_pixels()
+  end
+
+  def part_two(input) do
+    {algo, image} = parse(input)
+
+    image
+    |> enhance(algo, 50)
     |> Image.count_pixels()
   end
 
@@ -17,5 +24,13 @@ defmodule Day20 do
       |> String.split("\n\n")
 
     {String.split(algo, "", trim: true), Image.parse(image)}
+  end
+
+  defp enhance(image, _algo, 0), do: image
+
+  defp enhance(image, algo, n) do
+    image
+    |> Image.enhance(algo)
+    |> enhance(algo, n - 1)
   end
 end
