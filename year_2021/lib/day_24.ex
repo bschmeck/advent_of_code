@@ -9,7 +9,7 @@ defmodule Day24 do
     |> Stream.map(&convert_constants/1)
     |> Enum.reduce(Alu.new(), fn op, alu ->
       IO.inspect(op)
-      Alu.update(alu, op)
+      Alu.update(alu, op) |> IO.inspect()
     end)
   end
 
