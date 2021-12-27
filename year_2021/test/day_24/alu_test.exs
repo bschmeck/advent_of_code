@@ -77,4 +77,19 @@ defmodule Day24.AluTest do
 
     assert Alu.value(alu, "x") == 1
   end
+
+  test "it can accept input" do
+    alu = Alu.new() |> Alu.update(["inp", "w"])
+    assert Alu.value(alu, "w") == {:input, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}
+  end
+
+  test "it counts the number of inputs" do
+    alu =
+      Alu.new()
+      |> Alu.update(["inp", "w"])
+      |> Alu.update(["inp", "w"])
+      |> Alu.update(["inp", "w"])
+
+    assert {:input, 2, _} = Alu.value(alu, "w")
+  end
 end

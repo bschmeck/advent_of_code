@@ -10,6 +10,14 @@ defmodule Day24.Alu do
   def update(alu, ["div", a, b]), do: do_update(alu, a, b, fn v -> fn r -> div(r, v) end end)
   def update(alu, ["mod", a, b]), do: do_update(alu, a, b, fn v -> fn r -> rem(r, v) end end)
 
+  def update(alu, ["inp", a]) do
+    %__MODULE__{
+      registers:
+        Map.put(alu.registers, a, {:input, alu.input_count, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}),
+      input_count: alu.input_count + 1
+    }
+  end
+
   def update(alu, ["eql", a, b]),
     do:
       do_update(alu, a, b, fn v ->
