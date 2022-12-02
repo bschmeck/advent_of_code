@@ -15,7 +15,6 @@ defmodule Day01 do
 
   defp calories_per_elf(input) do
     input.contents_of(1, :stream)
-    |> Stream.map(&String.trim_trailing(&1))
     |> Enum.reduce([0], fn
       "", totals -> [0 | totals]
       raw, [total | rest] ->

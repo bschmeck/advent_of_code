@@ -1,7 +1,6 @@
 defmodule Day02 do
   def part_one(input \\ InputFile) do
     input.contents_of(2, :stream)
-    |> Enum.map(&String.trim_trailing(&1))
     |> Enum.map(fn line -> String.split(line, " ") |> Enum.map(&translate/1) end)
     |> Enum.map(&score(&1))
     |> Enum.reduce(0, &Kernel.+/2)
@@ -9,7 +8,6 @@ defmodule Day02 do
 
   def part_two(input \\ InputFile) do
     input.contents_of(2, :stream)
-    |> Enum.map(&String.trim_trailing(&1))
     |> Enum.map(fn line -> String.split(line, " ") |> choose() end)
     |> Enum.map(&score(&1))
     |> Enum.reduce(0, &Kernel.+/2)

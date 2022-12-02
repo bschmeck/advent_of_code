@@ -9,6 +9,7 @@ defmodule InputFile do
   def contents_of(n, :stream) do
     filename_for(n)
     |> File.stream!([], :line)
+    |> Enum.map(&String.trim_trailing(&1))
   end
 
   def contents_of(n, :read) do
