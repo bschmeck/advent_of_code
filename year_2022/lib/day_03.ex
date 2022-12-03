@@ -7,6 +7,16 @@ defmodule Day03 do
     |> Enum.sum()
   end
 
+  def part_two(input \\ InputFile) do
+    input.contents_of(3, :stream)
+    |> Enum.map(&pack_sack/1)
+    |> Enum.map(fn [left, right] -> MapSet.union(left, right) end)
+    |> Enum.chunk_every(3)
+    |> Enum.map(fn chunk -> Enum.reduce(chunk, fn a, b -> MapSet.intersection(a, b) end) |> MapSet.to_list() |> hd() end)
+    |> Enum.map(&priority/1)
+    |> Enum.sum()
+    end
+
   defp pack_sack(line) do
     length = String.length(line)
 
