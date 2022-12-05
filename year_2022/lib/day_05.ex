@@ -46,17 +46,20 @@ defmodule Day05 do
 
   defp move(stacks, []), do: stacks
   defp move(stacks, [{0, _, _} | rest]), do: move(stacks, rest)
-  defp move(stacks, [{count, from, to} | rest]), do: move(move_crate(stacks, from, to), [{count - 1, from, to} | rest])
-
-  defp move_crate(stacks, from, to) do
-    {crate, stacks} = Map.get_and_update(stacks, from, fn l -> {hd(l), tl(l)} end)
-    Map.update!(stacks, to, fn l -> [crate | l] end)
+  defp move(stacks, [{count, from, to} | rest]) do
+    stacks
+    |> move_crates({1, from, to})
+    |> move([{count - 1, from, to} | rest])
   end
 
   defp move_multi(stacks, []), do: stacks
-  defp move_multi(stacks, [op | rest]), do: stacks |> move_multi_crates(op) |> move_multi(rest)
+  defp move_multi(stacks, [op | rest]) do
+    stacks
+    |> move_crates(op)
+    |> move_multi(rest)
+  end
 
-  defp move_multi_crates(stacks, {count, from, to}) do
+  defp move_crates(stacks, {count, from, to}) do
     {crates, stacks} = Map.get_and_update(stacks, from, fn l -> {Enum.take(l, count), Enum.drop(l, count)} end)
     Map.update!(stacks, to, fn l -> crates ++ l end)
   end
