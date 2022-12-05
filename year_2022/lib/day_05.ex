@@ -18,22 +18,12 @@ defmodule Day05 do
   end
 
   def stacks(input) do
-    rows = input.contents_of(5, :stream)
-    |> Enum.take_while(fn l -> l != "" end) #Regex.match?(~r{\s+\[}, l) end)
-
-    width = rows |> Enum.map(fn a -> String.length(a) end) |> Enum.max()
-
-    rows
-    |> Enum.map(fn l -> String.pad_trailing(l, width) end)
-    |> Enum.map(fn l -> String.split(l, "") |> tl() |> Enum.reverse() |> tl() |> Enum.reverse() end)
-    |> Enum.map(fn l -> Enum.chunk_every(l, 4) |> Enum.map(fn chunk -> Enum.join(chunk) end) end)
-    |> Enum.map(fn l -> Enum.map(l, &String.trim/1) end)
-    |> Enum.map(fn l -> Enum.map(l, &String.trim(&1, "[")) end)
-    |> Enum.map(fn l -> Enum.map(l, &String.trim(&1, "]")) end)
-    |> Enum.zip()
-    |> Enum.map(&Tuple.to_list/1)
-    |> Enum.map(fn row -> Enum.reject(row, &(&1 == "")) end)
-    |> Enum.map(&Enum.reverse/1)
+    input.contents_of(5, :stream)
+    |> Enum.take_while(fn l -> l != "" end)
+    |> Enum.map(&String.codepoints/1)
+    |> Enum.map(&Kernel.tl/1)
+    |> Enum.map(fn l -> Enum.take_every(l, 4) end)
+    |> build([[]])
     |> Enum.reduce(%{}, fn [num | rest], h -> Map.put(h, num, Enum.reverse(rest)) end)
   end
 
@@ -63,4 +53,11 @@ defmodule Day05 do
     {crates, stacks} = Map.get_and_update(stacks, from, fn l -> {Enum.take(l, count), Enum.drop(l, count)} end)
     Map.update!(stacks, to, fn l -> crates ++ l end)
   end
+
+  defp build([], built), do: built
+  defp build(rows, built), do: build(rows, built, [])
+  defp build([[] | rest], built, prev), do: build(rest, Enum.reverse(prev) ++ built)
+  defp build([[" " | row] | rest], [s | stacks], prev), do: build([row | rest], stacks, [s | prev])
+  defp build([[crate | row] | rest], [s | stacks], prev), do: build([row | rest], stacks, [[crate | s] | prev])
+  defp build([[crate | row] | rest], [], prev), do: build([row | rest], [], [[crate] | prev])
 end
