@@ -5,6 +5,10 @@ defmodule Day05Test do
     assert Day05.part_one(InputTestFile) == "CMZ"
   end
 
+  test "it returns the top of each stack when moving multiple" do
+    assert Day05.part_two(InputTestFile) == "MCD"
+  end
+
   test "it builds stacks of crates" do
     assert Day05.stacks(InputTestFile) == %{"1" => ["N", "Z"], "2" => ["D", "C", "M"], "3" => ["P"]}
   end

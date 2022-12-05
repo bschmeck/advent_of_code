@@ -8,6 +8,15 @@ defmodule Day05 do
     |> Enum.join
   end
 
+  def part_two(input \\ InputFile) do
+    moved = move_multi(stacks(input), steps(input))
+
+    Map.keys(moved)
+    |> Enum.map(&Map.get(moved, &1))
+    |> Enum.map(&hd/1)
+    |> Enum.join
+  end
+
   def stacks(input) do
     rows = input.contents_of(5, :stream)
     |> Enum.take_while(fn l -> l != "" end) #Regex.match?(~r{\s+\[}, l) end)
@@ -42,5 +51,13 @@ defmodule Day05 do
   defp move_crate(stacks, from, to) do
     {crate, stacks} = Map.get_and_update(stacks, from, fn l -> {hd(l), tl(l)} end)
     Map.update!(stacks, to, fn l -> [crate | l] end)
+  end
+
+  defp move_multi(stacks, []), do: stacks
+  defp move_multi(stacks, [op | rest]), do: stacks |> move_multi_crates(op) |> move_multi(rest)
+
+  defp move_multi_crates(stacks, {count, from, to}) do
+    {crates, stacks} = Map.get_and_update(stacks, from, fn l -> {Enum.take(l, count), Enum.drop(l, count)} end)
+    Map.update!(stacks, to, fn l -> crates ++ l end)
   end
 end
