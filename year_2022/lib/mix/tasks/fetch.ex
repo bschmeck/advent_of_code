@@ -4,9 +4,8 @@ defmodule Mix.Tasks.Fetch do
   @shortdoc "Fetch the input and test files for AoC days"
   def run(_) do
     published_days()
-    |> Enum.flat_map(&[{&1, :input}, {&1, :test}])
-    |> Enum.reject(&exists?(&1))
-    |> Enum.each(&fetch(&1))
+    |> Enum.reject(&exists?/1)
+    |> Enum.each(&prep_day/1)
   end
 
   defp published_days() do
@@ -24,16 +23,38 @@ defmodule Mix.Tasks.Fetch do
     |> DateTime.to_date()
   end
 
-  defp exists?({day, :input}), do: InputFile.filename_for(day) |> File.exists?()
-  defp exists?({day, :test}), do: InputTestFile.filename_for(day) |> File.exists?()
+  defp exists?(day), do: InputFile.filename_for(day) |> File.exists?()
 
-  defp fetch({day, :input}) do
+  defp prep_day(day) do
+    fetch_input(day)
+    touch_test_input(day)
+    create_module(day)
+    create_test_file(day)
+  end
+
+  defp fetch_input(day) do
     url = "https://adventofcode.com/2022/day/#{day}/input"
     {:ok, response} = Tesla.get(url, headers: [{"cookie", cookie()}])
     day |> InputFile.filename_for() |> File.write(response.body)
   end
 
-  defp fetch({day, :test}), do: day |> InputTestFile.filename_for() |> File.touch()
+  defp touch_test_input(day), do: day |> InputTestFile.filename_for() |> File.touch()
+
+  defp create_module(day) do
+    source = Path.join(:code.priv_dir(:year_2022), "day_module.eex")
+    day = day |> Integer.to_string() |> String.pad_leading(2, "0")
+    contents = EEx.eval_file(source, day: day)
+    location = Path.join([:code.priv_dir(:year_2022), "..", "lib", "day_#{day}.ex"])
+    File.write(location, contents)
+  end
+
+  defp create_test_file(_day) do
+    source = Path.join(:code.priv_dir(:year_2022), "day_module_test.eex")
+    day = day |> Integer.to_string() |> String.pad_leading(2, "0")
+    contents = EEx.eval_file(source, day: day)
+    location = Path.join([:code.priv_dir(:year_2022), "..", "test", "day_#{day}_test.exs"])
+    File.write(location, contents)
+  end
 
   defp cookie, do: "session=#{Application.fetch_env!(:year_2022, :session)}"
 end
