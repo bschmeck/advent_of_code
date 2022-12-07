@@ -19,7 +19,7 @@ defmodule Day07 do
     |> Enum.find(fn size -> size >= needed end)
   end
 
-  defp build_fs(["$ cd /" | rest]), do: build_fs(rest, ["/"], %{["/"] => 0})
+  defp build_fs(lines), do: build_fs(lines, [], %{})
   defp build_fs([], _path, fs), do: fs
   defp build_fs(["$ cd .." | rest], path, fs), do: build_fs(rest, tl(path), fs)
   defp build_fs(["$ cd " <> dir | rest], path, fs) do
