@@ -48,7 +48,7 @@ defmodule Mix.Tasks.Fetch do
     File.write(location, contents)
   end
 
-  defp create_test_file(_day) do
+  defp create_test_file(day) do
     source = Path.join(:code.priv_dir(:year_2022), "day_module_test.eex")
     day = day |> Integer.to_string() |> String.pad_leading(2, "0")
     contents = EEx.eval_file(source, day: day)
