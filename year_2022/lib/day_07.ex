@@ -8,7 +8,15 @@ defmodule Day07 do
   end
 
   def part_two(input \\ InputFile) do
+    fs = input.contents_of(7, :stream) |> build_fs()
 
+    free_space = 70_000_000 - Map.get(fs, ["/"])
+    needed = 30_000_000 - free_space
+
+    fs
+    |> Map.values()
+    |> Enum.sort()
+    |> Enum.find(fn size -> size >= needed end)
   end
 
   defp build_fs(["$ cd /" | rest]), do: build_fs(rest, ["/"], %{["/"] => 0})

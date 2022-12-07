@@ -5,8 +5,7 @@ defmodule Day07Test do
     assert Day07.part_one(InputTestFile) == 95_437
   end
 
-  @tag :skip
-  test "it can solve part two" do
-
+  test "it finds the size of the directory to delete" do
+    assert Day07.part_two(InputTestFile) == 24_933_642
   end
 end
