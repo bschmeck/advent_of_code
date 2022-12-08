@@ -15,4 +15,13 @@ defmodule Day08.GridTest do
     grid = Day08.Grid.build([[1, 2], [3, 4], [5, 6], [7, 8]])
     assert grid.height == 4
   end
+
+  test "it provides all points in a row" do
+    grid = Day08.Grid.build([[1, 2, 2], [3, 4, 4]])
+    assert Day08.Grid.row(grid, 0) == [{0, 0}, {1, 0}, {2, 0}]
+  end
+  test "it provides all points in a column" do
+    grid = Day08.Grid.build([[1, 2], [3, 4], [5, 6], [7, 8]])
+    assert Day08.Grid.col(grid, 1) == [{1, 0}, {1, 1}, {1, 2}, {1, 3}]
+  end
 end

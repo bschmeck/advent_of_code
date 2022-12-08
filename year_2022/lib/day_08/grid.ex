@@ -15,4 +15,7 @@ defmodule Day08.Grid do
 
     %__MODULE__{width: max_x + 1, height: max_y + 1, map: points}
   end
+
+  def row(%__MODULE__{width: w}, y), do: for x <- 0..w-1, do: {x, y}
+  def col(%__MODULE__{height: h}, x), do: for y <- 0..h-1, do: {x, y}
 end
