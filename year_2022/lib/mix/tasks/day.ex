@@ -4,6 +4,8 @@ defmodule Mix.Tasks.Day do
   use Mix.Task
 
   @impl Mix.Task
+  def run(["10.2"]), do: Day10.part_two(InputFile) |> IO.puts
+
   def run([arg]) do
     with [day, part] <- String.split(arg, "."),
          {:ok, module} <- module_for(day)

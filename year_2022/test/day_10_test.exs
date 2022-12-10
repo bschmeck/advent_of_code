@@ -5,8 +5,14 @@ defmodule Day10Test do
     assert Day10.part_one(InputTestFile) == 13_140
   end
 
-  @tag :skip
   test "it can solve part two" do
-    # Day10.part_two(InputTestFile) == nil
+    image = "##..##..##..##..##..##..##..##..##..##..
+###...###...###...###...###...###...###.
+####....####....####....####....####....
+#####.....#####.....#####.....#####.....
+######......######......######......####
+#######.......#######.......#######....."
+
+    assert Day10.part_two(InputTestFile) == image
   end
 end
