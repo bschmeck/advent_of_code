@@ -1,27 +1,31 @@
 defmodule Day10 do
   def part_one(input \\ InputFile) do
     input.contents_of(10, :stream)
-    |> signal_strength({1, 1}, 0)
+    |> simulate(0, fn {cycle, x}, accum -> accum + signal_strength(cycle, x) end)
   end
 
   def part_two(input \\ InputFile) do
     input.contents_of(10, :stream)
-    |> draw_pixels({1, 1}, [])
+    |> simulate([], fn {cycle, x}, accum -> [pixel_at(cycle, x) | accum] end)
+    |> Enum.reverse()
     |> Enum.chunk_every(40)
     |> Enum.map(&Enum.join/1)
     |> Enum.join("\n")
   end
 
-  defp signal_strength([], _values, sum), do: sum
-  defp signal_strength(["noop" | rest], {cycle, x}, sum) when rem(cycle, 40) == 20, do: signal_strength(rest, {cycle + 1, x}, sum + cycle * x)
-  defp signal_strength(["noop" | rest], {cycle, x}, sum), do: signal_strength(rest, {cycle + 1, x}, sum)
-  defp signal_strength(["addx " <> amt | rest], {cycle, x}, sum) when rem(cycle, 40) == 20, do: signal_strength(rest, {cycle + 2, x + String.to_integer(amt)}, sum + cycle * x)
-  defp signal_strength(["addx " <> amt | rest], {cycle, x}, sum) when rem(cycle, 40) == 19, do: signal_strength(rest, {cycle + 2, x + String.to_integer(amt)}, sum + (cycle + 1) * x)
-  defp signal_strength(["addx " <> amt | rest], {cycle, x}, sum), do: signal_strength(rest, {cycle + 2, x + String.to_integer(amt)}, sum)
+  defp simulate(instrs, accum, func), do: simulate(instrs, {1, 1}, accum, func)
+  defp simulate([], _vaules, accum, _func), do: accum
+  defp simulate(["noop" | rest], {cycle, x}, accum, func), do: simulate(rest, {cycle + 1, x}, func.({cycle, x}, accum), func)
+  defp simulate(["addx " <> amt | rest], {cycle, x}, accum, func) do
+    amt = String.to_integer(amt)
+    accum = func.({cycle, x}, accum)
+    accum = func.({cycle + 1, x}, accum)
 
-  defp draw_pixels([], _values, pixels), do: Enum.reverse(pixels)
-  defp draw_pixels(["noop" | rest], {cycle, x}, pixels), do: draw_pixels(rest, {cycle + 1, x}, [pixel_at(cycle, x) | pixels])
-  defp draw_pixels(["addx " <> amt | rest], {cycle, x}, pixels), do: draw_pixels(rest, {cycle + 2, x + String.to_integer(amt)}, [pixel_at(cycle + 1, x), pixel_at(cycle, x) | pixels])
+    simulate(rest, {cycle + 2, x + amt}, accum, func)
+  end
+
+  defp signal_strength(cycle, x) when rem(cycle, 40) == 20, do: cycle * x
+  defp signal_strength(_cycle, _x), do: 0
 
   defp pixel_at(cycle, x) when abs(rem(cycle - 1, 40) - x) <= 1, do: "#"
   defp pixel_at(_cycle, _x), do: "."
