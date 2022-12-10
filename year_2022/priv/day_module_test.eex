@@ -3,11 +3,11 @@ defmodule Day<%= day %>Test do
 
   @tag :skip
   test "it can solve part one" do
-
+    # Day<%= day %>.part_one(InputTestFile) == nil
   end
 
   @tag :skip
   test "it can solve part two" do
-
+    # Day<%= day %>.part_two(InputTestFile) == nil
   end
 end
