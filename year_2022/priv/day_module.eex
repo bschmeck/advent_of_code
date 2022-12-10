@@ -3,7 +3,7 @@ defmodule Day<%= day %> do
 
   end
 
-  def part_two(input \\ InputFile) do
+  def part_two(_input \\ InputFile) do
 
   end
 end
