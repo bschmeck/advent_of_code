@@ -1,7 +1,7 @@
 defmodule Day08 do
   def part_one(input \\ InputFile) do
     grid = input.contents_of(8, :stream)
-    |> Day08.Grid.build(fn l -> l |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
+    |> Grid.build(fn l -> l |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
 
     grid.map
     |> Map.keys()
@@ -10,7 +10,7 @@ defmodule Day08 do
 
   def part_two(input \\ InputFile) do
     grid = input.contents_of(8, :stream)
-    |> Day08.Grid.build(fn l -> l |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
+    |> Grid.build(fn l -> l |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
 
     grid.map
     |> Map.keys()
@@ -28,10 +28,10 @@ defmodule Day08 do
     end)
   end
 
-  defp points_to({x, y}, grid, :left), do: grid |> Day08.Grid.row(y) |> Enum.take_while(fn {x2, _} -> x2 < x end)
-  defp points_to({x, y}, grid, :right), do: grid |> Day08.Grid.row(y) |> Enum.reverse() |> Enum.take_while(fn {x2, _} -> x2 > x end)
-  defp points_to({x, y}, grid, :up), do: grid |> Day08.Grid.col(x) |> Enum.take_while(fn {_, y2} -> y2 < y end)
-  defp points_to({x, y}, grid, :down), do: grid |> Day08.Grid.col(x) |> Enum.reverse() |> Enum.take_while(fn {_, y2} -> y2 > y end)
+  defp points_to({x, y}, grid, :left), do: grid |> Grid.row(y) |> Enum.take_while(fn {x2, _} -> x2 < x end)
+  defp points_to({x, y}, grid, :right), do: grid |> Grid.row(y) |> Enum.reverse() |> Enum.take_while(fn {x2, _} -> x2 > x end)
+  defp points_to({x, y}, grid, :up), do: grid |> Grid.col(x) |> Enum.take_while(fn {_, y2} -> y2 < y end)
+  defp points_to({x, y}, grid, :down), do: grid |> Grid.col(x) |> Enum.reverse() |> Enum.take_while(fn {_, y2} -> y2 > y end)
 
   defp scenic_score(point, grid) do
     tree = Map.get(grid.map, point)

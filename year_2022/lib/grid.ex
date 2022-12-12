@@ -1,4 +1,4 @@
-defmodule Day08.Grid do
+defmodule Grid do
   defstruct [:width, :height, :map]
 
   def build(enum, f \\ fn x -> x end) do
