@@ -10,9 +10,9 @@ defmodule Day12Test do
   end
 
   test "it can identify valid steps down" do
-    refute Day12.valid_step?(122, 115, :down)
-    refute Day12.valid_step?(122, 117, :down)
-    assert Day12.valid_step?(122, 121, :down)
-    assert Day12.valid_step?(120, 120, :down)
+    refute Day12.valid_step?(122, 115)
+    refute Day12.valid_step?(122, 117)
+    assert Day12.valid_step?(122, 121)
+    assert Day12.valid_step?(120, 120)
   end
 end
