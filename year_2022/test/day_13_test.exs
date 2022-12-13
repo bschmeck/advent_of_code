@@ -1,7 +1,6 @@
 defmodule Day13Test do
   use ExUnit.Case, async: true
 
-  @tag :skip
   test "it can solve part one" do
     assert Day13.part_one(InputTestFile) == 13
   end
@@ -24,7 +23,7 @@ defmodule Day13Test do
   end
 
   test "two lists are not valid if the right one runs out of elements first" do
-    refute Day13.valid?([13], [])
+    refute Day13.valid?([13, 9], [])
   end
 
   test "it converts an integer to a list if needed" do
@@ -32,6 +31,19 @@ defmodule Day13Test do
     refute Day13.valid?([7], [[3]])
     assert Day13.valid?([[1]], [3])
     refute Day13.valid?([[7]], [3])
+  end
+
+  test "it handles nested lists" do
+    left = [
+      [[5, 1, [], [8, 1, 3], 6], ['\a']],
+      [10, []],
+      [6],
+      [[], [[0, 6, 4, 10, 5], [2, 2, 9], [4, 4], [2, 10, 4, 10, 8]], 7, 7],
+      [[5], 5, [[6], [8, 2], [5], []], [9, 3, 2, [9, 4, 8, 6, 8]]]
+    ]
+    right = [[5]]
+
+    refute Day13.valid?(left, right)
   end
 
   test "it compares the lists from the example correctly" do
