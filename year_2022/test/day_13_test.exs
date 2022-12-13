@@ -5,9 +5,8 @@ defmodule Day13Test do
     assert Day13.part_one(InputTestFile) == 13
   end
 
-  @tag :skip
   test "it can solve part two" do
-    assert Day13.part_two(InputTestFile) == nil
+    assert Day13.part_two(InputTestFile) == 140
   end
 
   test "two integers are valid if the left one is smaller" do

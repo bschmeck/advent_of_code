@@ -10,8 +10,21 @@ defmodule Day13 do
     |> Enum.sum()
   end
 
-  def part_two(_input \\ InputFile) do
+  def part_two(input \\ InputFile) do
+    packets = input.contents_of(13, :stream)
+    |> Enum.map(fn line -> Code.eval_string(line) |> elem(0) end)
+    |> Enum.reject(fn line -> line == nil end)
 
+    [[[2]], [[6]] | packets]
+    |> Enum.sort(fn left, right -> valid?(left, right) end)
+    |> Enum.with_index(1)
+    |> Enum.filter(fn
+      {[[2]], _index} -> true
+      {[[6]], _index} -> true
+      _ -> false
+    end)
+    |> Enum.map(fn {_packet, index} -> index end)
+    |> Enum.reduce(&Kernel.*/2)
   end
 
   def valid?(left, right) when is_integer(left) and is_integer(right) do
