@@ -6,6 +6,7 @@ defmodule Mix.Tasks.Day do
   @impl Mix.Task
   def run(["10.2"]), do: Day10.part_two(InputFile) |> IO.puts
   def run(["15.1"]), do: Day15.part_one(InputFile, 2_000_000) |> IO.puts
+  def run(["15.2"]), do: Day15.part_two(InputFile, 4_000_000) |> IO.puts
 
   def run([arg]) do
     with [day, part] <- String.split(arg, "."),
