@@ -2,7 +2,7 @@ defmodule Day19Test do
   use ExUnit.Case, async: true
 
   test "it can solve part one" do
-    assert Day19.part_one(InputTestFile) == nil
+    assert Day19.part_one(InputTestFile) == 33
   end
 
   @tag :skip
