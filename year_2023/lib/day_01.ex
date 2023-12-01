@@ -9,8 +9,7 @@ defmodule Day01 do
 
   def part_two(input \\ InputFile) do
     input.contents_of(1, :stream)
-    |> Enum.map(fn line -> extract_written_digits(line) end)
-    |> Enum.map(fn digits -> [hd(digits), hd(Enum.reverse(digits))] end)
+    |> Enum.map(fn line -> [first_digit(line), last_digit(String.reverse(line))] end)
     |> Enum.map(fn [tens, ones] -> tens * 10 + ones end)
     |> Enum.sum
   end
@@ -22,25 +21,43 @@ defmodule Day01 do
     |> Enum.map(&String.to_integer/1)
   end
 
-  def extract_written_digits(line), do: extract_written_digits(line, [])
-  defp extract_written_digits("", digits), do: Enum.reverse(digits)
-  defp extract_written_digits("1" <> rest, digits), do: extract_written_digits(rest, [1 | digits])
-  defp extract_written_digits("2" <> rest, digits), do: extract_written_digits(rest, [2 | digits])
-  defp extract_written_digits("3" <> rest, digits), do: extract_written_digits(rest, [3 | digits])
-  defp extract_written_digits("4" <> rest, digits), do: extract_written_digits(rest, [4 | digits])
-  defp extract_written_digits("5" <> rest, digits), do: extract_written_digits(rest, [5 | digits])
-  defp extract_written_digits("6" <> rest, digits), do: extract_written_digits(rest, [6 | digits])
-  defp extract_written_digits("7" <> rest, digits), do: extract_written_digits(rest, [7 | digits])
-  defp extract_written_digits("8" <> rest, digits), do: extract_written_digits(rest, [8 | digits])
-  defp extract_written_digits("9" <> rest, digits), do: extract_written_digits(rest, [9 | digits])
-  defp extract_written_digits("one" <> rest, digits), do: extract_written_digits("e" <> rest, [1 | digits])
-  defp extract_written_digits("two" <> rest, digits), do: extract_written_digits("o" <> rest, [2 | digits])
-  defp extract_written_digits("three" <> rest, digits), do: extract_written_digits("e" <> rest, [3 | digits])
-  defp extract_written_digits("four" <> rest, digits), do: extract_written_digits(rest, [4 | digits])
-  defp extract_written_digits("five" <> rest, digits), do: extract_written_digits("e" <> rest, [5 | digits])
-  defp extract_written_digits("six" <> rest, digits), do: extract_written_digits(rest, [6 | digits])
-  defp extract_written_digits("seven" <> rest, digits), do: extract_written_digits("n" <> rest, [7 | digits])
-  defp extract_written_digits("eight" <> rest, digits), do: extract_written_digits("t" <> rest, [8 | digits])
-  defp extract_written_digits("nine" <> rest, digits), do: extract_written_digits("e" <> rest, [9 | digits])
-  defp extract_written_digits(<<_::binary-size(1)>> <> rest, digits), do: extract_written_digits(rest, digits)
+  def first_digit("1" <> _rest), do: 1
+  def first_digit("2" <> _rest), do: 2
+  def first_digit("3" <> _rest), do: 3
+  def first_digit("4" <> _rest), do: 4
+  def first_digit("5" <> _rest), do: 5
+  def first_digit("6" <> _rest), do: 6
+  def first_digit("7" <> _rest), do: 7
+  def first_digit("8" <> _rest), do: 8
+  def first_digit("9" <> _rest), do: 9
+  def first_digit("one" <> _rest), do: 1
+  def first_digit("two" <> _rest), do: 2
+  def first_digit("three" <> _rest), do: 3
+  def first_digit("four" <> _rest), do: 4
+  def first_digit("five" <> _rest), do: 5
+  def first_digit("six" <> _rest), do: 6
+  def first_digit("seven" <> _rest), do: 7
+  def first_digit("eight" <> _rest), do: 8
+  def first_digit("nine" <> _rest), do: 9
+  def first_digit(<<_::binary-size(1)>> <> rest), do: first_digit(rest)
+
+  def last_digit("1" <> _rest), do: 1
+  def last_digit("2" <> _rest), do: 2
+  def last_digit("3" <> _rest), do: 3
+  def last_digit("4" <> _rest), do: 4
+  def last_digit("5" <> _rest), do: 5
+  def last_digit("6" <> _rest), do: 6
+  def last_digit("7" <> _rest), do: 7
+  def last_digit("8" <> _rest), do: 8
+  def last_digit("9" <> _rest), do: 9
+  def last_digit("eno" <> _rest), do: 1
+  def last_digit("owt" <> _rest), do: 2
+  def last_digit("eerht" <> _rest), do: 3
+  def last_digit("ruof" <> _rest), do: 4
+  def last_digit("evif" <> _rest), do: 5
+  def last_digit("xis" <> _rest), do: 6
+  def last_digit("neves" <> _rest), do: 7
+  def last_digit("thgie" <> _rest), do: 8
+  def last_digit("enin" <> _rest), do: 9
+  def last_digit(<<_::binary-size(1)>> <> rest), do: last_digit(rest)
 end

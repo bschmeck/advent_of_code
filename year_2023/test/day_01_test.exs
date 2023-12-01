@@ -9,9 +9,16 @@ defmodule Day01Test do
     assert Day01.extract_digits("ab1cd2ef3") == [1, 2, 3]
   end
 
-  test "it finds digits written as words" do
-    assert Day01.extract_written_digits("two1nine") == [2, 1, 9]
-    assert Day01.extract_written_digits("abcone2threexyz") == [1, 2, 3]
-    assert Day01.extract_written_digits("xtwone3four") == [2, 3, 4]
+  test "it finds first digits written as words" do
+    assert Day01.first_digit("two1nine") == 2
+    assert Day01.first_digit("abcone2threexyz") == 1
+    assert Day01.first_digit("xtwone3four") == 2
+  end
+
+  test "it finds last digits written as words" do
+    assert Day01.last_digit(String.reverse("two1nine")) == 9
+    assert Day01.last_digit(String.reverse("abcone2threexyz")) == 3
+    assert Day01.last_digit(String.reverse("xtwone3four")) == 4
+    assert Day01.last_digit(String.reverse("xtwone3eightwozz")) == 2
   end
 end
