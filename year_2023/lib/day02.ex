@@ -1,14 +1,22 @@
 defmodule Day02 do
+  defmodule Parser do
+    import NimbleParsec
+
+    defparsec :game, ignore(string("Game ")) |> integer(min: 1) |> ignore(string(": "))
+    defparsec :set, integer(min: 1) |> ignore(string(" ")) |> choice([string("blue"), string("green"), string("red")])
+  end
+
   defmodule Set do
     defstruct red: 0, green: 0, blue: 0
 
     def parse(raw) do
       String.split(raw, ", ")
-      |> Enum.map(fn draw -> String.split(draw, " ") end)
+      |> Enum.map(&Parser.set/1)
+      |> Enum.map(fn {:ok, [count, color], "", _, _, _} -> [count, color] end)
       |> Enum.reduce(%__MODULE__{}, fn
-        [n, "blue"], acc -> %__MODULE__{acc | blue: String.to_integer(n)}
-        [n, "red"], acc -> %__MODULE__{acc | red: String.to_integer(n)}
-        [n, "green"], acc -> %__MODULE__{acc | green: String.to_integer(n)}
+        [n, "blue"], acc -> %__MODULE__{acc | blue: n}
+        [n, "red"], acc -> %__MODULE__{acc | red: n}
+        [n, "green"], acc -> %__MODULE__{acc | green: n}
         end)
     end
   end
@@ -17,11 +25,11 @@ defmodule Day02 do
     defstruct [:id, :sets]
 
     def parse(row) do
-      ["Game " <> id, rest] = String.split(row, ": ")
+      {:ok, [id], rest, _, _, _} = Parser.game(row)
 
       sets = String.split(rest, "; ") |> Enum.map(&Set.parse(&1))
 
-      %__MODULE__{id: String.to_integer(id), sets: sets}
+      %__MODULE__{id: id, sets: sets}
     end
   end
 

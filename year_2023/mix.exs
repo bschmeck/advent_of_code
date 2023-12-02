@@ -21,7 +21,8 @@ defmodule Year2023.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:tesla, "~> 1.4"}
+      {:tesla, "~> 1.4"},
+      {:nimble_parsec, "~> 1.4"}
     ]
   end
 end
