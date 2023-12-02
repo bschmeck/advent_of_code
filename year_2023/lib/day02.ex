@@ -1,6 +1,6 @@
 defmodule Day02 do
   defmodule Set do
-    defstruct [:red, :green, :blue]
+    defstruct red: 0, green: 0, blue: 0
 
     def parse(raw) do
       String.split(raw, ", ")
@@ -33,8 +33,23 @@ defmodule Day02 do
     |> Enum.sum
   end
 
+  def part_two(input \\ InputFile) do
+    input.contents_of(2, :stream)
+    |> Enum.map(fn line -> Game.parse(line) end)
+    |> Enum.map(fn game -> minimum_possible(game) end)
+    |> Enum.map(fn %Set{} = s -> s.red * s.green * s.blue end)
+    |> Enum.sum
+  end
+
   def possible?(game) do
     game.sets
-    |> Enum.all?(fn %Set{red: r, green: g, blue: b} -> (r <= 12 || r == nil) && (g <= 13 || g == nil) && (b <= 14 || b == nil) end)
+    |> Enum.all?(fn %Set{red: r, green: g, blue: b} -> r <= 12 && g <= 13 && b <= 14 end)
+  end
+
+  def minimum_possible(game) do
+    game.sets
+    |> Enum.reduce(fn set, max -> %Set{red: Enum.max([set.red, max.red]),
+                                    green: Enum.max([set.green, max.green]),
+                                    blue: Enum.max([set.blue, max.blue])} end)
   end
 end
