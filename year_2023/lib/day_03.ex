@@ -7,7 +7,23 @@ defmodule Day03 do
     input.contents_of(3, :stream)
     |> Enum.with_index
     |> Enum.flat_map(fn {row, y} -> part_locations(row, y) end)
+    |> Enum.map(fn loc -> Map.get(totals, loc, 0) |> Enum.sum() end)
+    |> Enum.sum
+  end
+
+  def part_two(input \\ InputTestFile) do
+    totals = input.contents_of(3, :stream)
+    |> Enum.with_index
+    |> Enum.reduce(%{}, fn row, acc -> parse(row, acc) end)
+
+    input.contents_of(3, :stream)
+    |> Enum.with_index
+    |> Enum.flat_map(fn {row, y} -> gear_locations(row, y) end)
     |> Enum.map(fn loc -> Map.get(totals, loc, 0) end)
+    |> Enum.map(fn
+      [a, b] -> a * b
+      _ -> 0
+    end)
     |> Enum.sum
   end
 
@@ -32,7 +48,7 @@ defmodule Day03 do
     |> Enum.reject(fn {x, y} -> x < 0 || y < 0 end)
     |> Enum.into(%MapSet{})
     |> MapSet.difference(exclude)
-    |> Enum.reduce(map, fn point, acc -> Map.update(acc, point, n, &(&1 + n)) end)
+    |> Enum.reduce(map, fn point, acc -> Map.update(acc, point, [n], &([n | &1])) end)
   end
 
   def part_locations(row, y) do
@@ -40,6 +56,14 @@ defmodule Day03 do
     |> String.split("", trim: true)
     |> Enum.with_index()
     |> Enum.reject(fn {char, _x} -> char in ~w[. 0 1 2 3 4 5 6 7 8 9] end)
+    |> Enum.map(fn {_char, x} -> {x, y} end)
+  end
+
+  def gear_locations(row, y) do
+    row
+    |> String.split("", trim: true)
+    |> Enum.with_index()
+    |> Enum.filter(fn {char, _x} -> char == "*" end)
     |> Enum.map(fn {_char, x} -> {x, y} end)
   end
 end
