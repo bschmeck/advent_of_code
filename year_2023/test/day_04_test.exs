@@ -5,11 +5,13 @@ defmodule Day04Test do
     assert Day04.part_one(InputTestFile) == 13
   end
 
-  test "it scores a single game" do
-    score = "Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53"
-    |> Day04.parse
-    |> Day04.score
+  test "it totals the cards won" do
+    assert Day04.part_two(InputTestFile) == 30
+  end
 
-    assert score == 8
+  test "it scores a single game" do
+    winners = MapSet.new([41, 48, 83, 86, 17])
+    given = MapSet.new([83, 86, 6, 31, 17, 9, 48, 53])
+    assert Day04.score([winners, given]) == 8
   end
 end
