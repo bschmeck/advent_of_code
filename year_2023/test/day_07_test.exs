@@ -5,9 +5,8 @@ defmodule Day07Test do
     assert Day07.part_one(InputTestFile) == 6440
   end
 
-  @tag :skip
   test "it can solve part two" do
-    assert Day07.part_two(InputTestFile) == nil
+    assert Day07.part_two(InputTestFile) == 5905
   end
 
   test "it can recognize ranks" do
@@ -35,4 +34,15 @@ defmodule Day07Test do
     assert Day07.Hand.cmp(h1, h2) > 0
     assert Day07.Hand.cmp(h2, h1) < 0
   end
+
+  test "it can recognize ranks with wildcards" do
+    assert Day07.WildHand.rank([13, 1, 13, 13, 13]) == 7
+    assert Day07.WildHand.rank([13, 13, 8, 1, 13]) == 6
+    assert Day07.WildHand.rank([2, 1, 3, 3, 2]) == 5
+    assert Day07.WildHand.rank([1, 10, 10, 9, 8]) == 4
+    assert Day07.WildHand.rank([2, 3, 4, 3, 2]) == 3
+    assert Day07.WildHand.rank([13, 2, 3, 1, 4]) == 2
+    assert Day07.WildHand.rank([2, 3, 4, 5, 6]) == 1
+  end
+
 end
