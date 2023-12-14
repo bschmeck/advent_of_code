@@ -1,6 +1,8 @@
 import Bitwise
 
 defmodule Day13 do
+  defguard power_of_two(n) when (n &&& (n - 1)) == 0
+
   def part_one(input \\ InputFile) do
     input.contents_of(13)
     |> String.split("\n\n")
@@ -54,7 +56,7 @@ defmodule Day13 do
   def reflected_with_smudge?([], _), do: false
   def reflected_with_smudge?(_, []), do: false
   def reflected_with_smudge?([a | left], [a | right]), do: reflected_with_smudge?(left, right)
-  def reflected_with_smudge?([a | left], [b | right]) when (abs(a - b) &&& (abs(a - b) - 1)) == 0, do: reflected?(left, right)
+  def reflected_with_smudge?([a | left], [b | right]) when power_of_two(abs(a - b)), do: reflected?(left, right)
   def reflected_with_smudge?(_, _), do: false
 
   def row_to_int(row) do
