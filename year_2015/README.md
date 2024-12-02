@@ -1,6 +1,6 @@
 # Year2015
 
-**TODO: Add description**
+The year is 2015: I'm still iffy on EMACS and, as far as I know, Imperva's WAFs aren't yet market-leading solutions.
 
 ## Installation
 
@@ -18,4 +18,3 @@ end
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/year_2015](https://hexdocs.pm/year_2015).
-
