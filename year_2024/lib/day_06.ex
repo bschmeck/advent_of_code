@@ -16,30 +16,18 @@ defmodule Day06 do
     pos = Enum.find(grid.map, fn {_pos, c} -> c == "^" end) |> elem(0)
     state = {pos, {0, -1}}
 
-    IO.puts("Grid dimensions: #{grid.width}x#{grid.height}")
-    placed = walk2(state, grid, MapSet.new())
-    IO.puts("Includes starting pos: #{MapSet.member?(placed, pos)}")
-    Enum.count(placed)
+    walk2(state, state, grid, MapSet.new())
   end
 
-  def walk2({{x, y}, {dx, dy}}=state, %Grid{width: w, height: h} = grid, placed) do
+  def walk2({{x, y}, {dx, dy}}=state, start, %Grid{width: w, height: h} = grid, placed) do
     case step(state, grid) do
-      {{-1, _y}, _vec} -> placed
-      {{_x, -1}, _vec} -> placed
-      {{^w, _y}, _vec} -> placed
-      {{_x, ^h}, _vec} -> placed
-      state -> if would_loop?(state, grid), do: walk2(state, grid, MapSet.put(placed, {x+dx, y+dy})), else: walk2(state, grid, placed)
-    end
-  end
-
-  def would_loop?({{x, y}, {dx, dy}}=state, grid) do
-    pos = {x+dx, y+dy}
-    case Map.get(grid.map, pos) do
-      "#" -> false
-      nil -> false
-      _ ->
-        new_grid = %Grid{grid | map: Map.put(grid.map, pos, "#")}
-        would_loop?(state, new_grid, MapSet.new([state]))
+      {{-1, _y}, _vec} -> Enum.count(placed)
+      {{_x, -1}, _vec} -> Enum.count(placed)
+      {{^w, _y}, _vec} -> Enum.count(placed)
+      {{_x, ^h}, _vec} -> Enum.count(placed)
+      state ->
+        placed_at = {x+dx, y+dy}
+        if would_loop?(placed_at, start, grid), do: walk2(state, start, grid, MapSet.put(placed, placed_at)), else: walk2(state, start, grid, placed)
     end
   end
 
@@ -55,6 +43,15 @@ defmodule Day06 do
         {{_x, ^h}, _vec} -> false
         _ -> would_loop?(state, grid, MapSet.put(seen, state))
       end
+    end
+  end
+  def would_loop?(pos, state, grid) do
+    case Map.get(grid.map, pos) do
+      "#" -> false
+      nil -> false
+      _ ->
+        new_grid = %Grid{grid | map: Map.put(grid.map, pos, "#")}
+        would_loop?(state, new_grid, MapSet.new([state]))
     end
   end
 
