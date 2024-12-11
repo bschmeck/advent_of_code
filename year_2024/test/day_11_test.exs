@@ -5,17 +5,20 @@ defmodule Day11Test do
     assert Day11.part_one(InputTestFile) == 55312
   end
 
-  @tag :skip
-  test "it can solve part two" do
-    assert Day11.part_two(InputTestFile) == nil
-  end
-
   test "it can blink once" do
     assert Day11.blink([125, 17], 1) == [253_000, 1, 7]
   end
 
   test "it can blink twice" do
     assert Day11.blink([125, 17], 2) == [253, 0, 2024, 14_168]
+  end
+
+  test "it can blink2 once" do
+    assert Day11.blink2(%{125 => 1, 17 => 1}, 1) == %{253_000 => 1, 1 => 1, 7 => 1}
+  end
+
+  test "it can blink2 twice" do
+    assert Day11.blink2(%{125 => 1, 17 => 1}, 2) == %{253 => 1, 0 => 1, 2024 => 1, 14_168 => 1}
   end
 
   test "it can transform 0" do

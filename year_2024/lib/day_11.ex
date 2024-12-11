@@ -8,8 +8,15 @@ defmodule Day11 do
     |> Enum.count()
   end
 
-  def part_two(_input \\ InputFile) do
-
+  def part_two(input \\ InputFile) do
+    input.contents_of(11)
+    |> String.trim()
+    |> String.split(" ", trim: true)
+    |> Enum.map(&String.to_integer/1)
+    |> Enum.map(&({&1, 1}))
+    |> blink2(75)
+    |> Map.values()
+    |> Enum.reduce(&Kernel.+/2)
   end
 
   def blink(stones, 0), do: stones
@@ -17,6 +24,14 @@ defmodule Day11 do
     stones
     |> Enum.flat_map(&transform/1)
     |> blink(n - 1)
+  end
+
+  def blink2(stones, 0), do: stones
+  def blink2(stones, n) do
+    stones
+    |> Enum.flat_map(fn {stone, count} -> stone |> transform() |> Enum.map(&({&1, count})) end)
+    |> Enum.reduce(%{}, fn {stone, count}, map -> Map.update(map, stone, count, &(&1 + count)) end)
+    |> blink2(n - 1)
   end
 
   def transform(0), do: [1]
