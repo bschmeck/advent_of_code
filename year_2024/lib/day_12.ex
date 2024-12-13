@@ -9,8 +9,14 @@ defmodule Day12 do
     |> Enum.sum()
   end
 
-  def part_two(_input \\ InputFile) do
-
+  def part_two(input \\ InputFile) do
+    input.contents_of(12, :stream)
+    |> Enum.map(fn row -> row |> String.split("", trim: true) end)
+    |> Enum.with_index()
+    |> Enum.flat_map(fn {row, y} -> row |> Enum.with_index() |> Enum.map(fn {char, x} -> {char, {x, y}} end) end)
+    |> Enum.reduce(%{}, &build/2)
+    |> Enum.flat_map(fn {_char, regions} -> Enum.map(regions, &cost2/1) end)
+    |> Enum.sum()
   end
 
   def build({char, {x, y}}, regions) do
@@ -29,5 +35,12 @@ defmodule Day12 do
     perimeter = Enum.map(region, fn {x, y} -> 4 - Enum.count([{x - 1, y}, {x, y + 1}, {x + 1, y}, {x, y - 1}], &MapSet.member?(region, &1)) end) |> Enum.sum()
 
     area * perimeter
+  end
+
+  def cost2(region) do
+    area = Enum.count(region)
+    corners = Enum.count(region, fn {x, y} -> !MapSet.member?(region, {x, y - 1}) && !MapSet.member?(region, {x - 1, y}) end) + Enum.count(region, fn {x, y} -> !MapSet.member?(region, {x, y + 1}) && !MapSet.member?(region, {x - 1, y}) end) + Enum.count(region, fn {x, y} -> !MapSet.member?(region, {x, y - 1}) && !MapSet.member?(region, {x + 1, y}) end) + Enum.count(region, fn {x, y} -> !MapSet.member?(region, {x, y + 1}) && !MapSet.member?(region, {x + 1, y}) end) + Enum.count(region, fn {x, y} -> MapSet.member?(region, {x, y - 1}) && MapSet.member?(region, {x + 1, y}) && !MapSet.member?(region, {x + 1, y - 1}) end) + Enum.count(region, fn {x, y} -> MapSet.member?(region, {x, y + 1}) && MapSet.member?(region, {x + 1, y}) && !MapSet.member?(region, {x + 1, y + 1}) end) + Enum.count(region, fn {x, y} -> MapSet.member?(region, {x, y - 1}) && MapSet.member?(region, {x - 1, y}) && !MapSet.member?(region, {x - 1, y - 1}) end) + Enum.count(region, fn {x, y} -> MapSet.member?(region, {x, y + 1}) && MapSet.member?(region, {x - 1, y}) && !MapSet.member?(region, {x - 1, y + 1}) end)
+
+    area * corners
   end
 end
