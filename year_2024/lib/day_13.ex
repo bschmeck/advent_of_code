@@ -28,8 +28,15 @@ defmodule Day13 do
     |> Enum.sum()
   end
 
-  def part_two(_input \\ InputFile) do
-
+  def part_two(input \\ InputFile) do
+    input.contents_of(13)
+    |> String.split("\n\n", trim: true)
+    |> Enum.map(&Machine.parse/1)
+    |> Enum.map(fn machine -> %Machine{machine | goal_x: 10000000000000 + machine.goal_x, goal_y: 10000000000000 + machine.goal_y} end)
+    |> Enum.map(&solve/1)
+    |> Enum.filter(&whole?/1)
+    |> Enum.map(fn {a, b} -> 3 * a + b end)
+    |> Enum.sum()
   end
 
   def solve(%Machine{} = machine) do
