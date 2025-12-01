@@ -5,8 +5,7 @@ defmodule Day01Test do
     assert Day01.part_one(InputTestFile) == 3
   end
 
-  @tag :skip
   test "it can solve part two" do
-    assert Day01.part_two(InputTestFile) == nil
+    assert Day01.part_two(InputTestFile) == 6
   end
 end
