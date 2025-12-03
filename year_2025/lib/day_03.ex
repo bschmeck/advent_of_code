@@ -2,19 +2,34 @@ defmodule Day03 do
   def part_one(input \\ InputFile) do
     input.contents_of(3, :stream)
     |> Enum.map(fn line -> line |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
-    |> Enum.map(&joltage/1)
+    |> Enum.map(&(joltage(&1, 2)))
     |> Enum.reduce(0, &Kernel.+/2)
   end
 
-  def part_two(_input \\ InputFile) do
-
+  def part_two(input \\ InputFile) do
+    input.contents_of(3, :stream)
+    |> Enum.map(fn line -> line |> String.split("", trim: true) |> Enum.map(&String.to_integer/1) end)
+    |> Enum.map(&(joltage(&1, 12)))
+    |> Enum.reduce(0, &Kernel.+/2)
   end
 
-  def joltage(l), do: joltage(l, 0)
-  def joltage([_elt], j), do: j
-  def joltage([tens | rest], j) when tens * 10 + 9 <= j, do: joltage(rest, j)
-  def joltage([tens | rest], j) do
-    max = tens * 10 + Enum.max(rest)
-    joltage(rest, Enum.max([max, j]))
+  def joltage(list, n) do
+    zeros = for _ <- list, do: 0
+
+    joltage(zeros, n, 1, Enum.reverse(list))
+  end
+
+  def joltage(best, n, m, _list) when m > n, do: Enum.max(best)
+  def joltage(best, n, m, list) do
+    best
+    |> Enum.zip(list)
+    |> Enum.map(fn {x, y} -> y * 10**(m-1) + x end)
+    |> Enum.reduce([], fn
+      elt, [] -> [elt]
+      elt, [prev | _] = best when elt > prev -> [elt | best]
+      _elt, [prev | _] = best -> [prev | best]
+    end)
+    |> Enum.reverse()
+    |> joltage(n, m + 1, tl(list))
   end
 end
