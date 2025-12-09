@@ -13,13 +13,13 @@ defmodule Day08 do
   end
 
   def part_one(input \\ InputFile) do
-    dists = input.contents_of(8, :stream)
-    |> Enum.map(&Point.parse/1)
-    |> distances()
-
     n = if Mix.env() == :test, do: 10, else: 1000
 
-    link(dists, n)
+    input.contents_of(8, :stream)
+    |> Enum.map(&Point.parse/1)
+    |> distances(n)
+    |> Enum.reverse()
+    |> link()
     |> Enum.map(&MapSet.size/1)
     |> Enum.sort()
     |> Enum.reverse()
@@ -31,14 +31,12 @@ defmodule Day08 do
 
   end
 
-  def link(distances, n), do: link(distances, n, [])
-  def link(_distances, 0, circuits), do: circuits
-  def link(distances, n, circuits) do
-    min = distances |> Map.keys() |> Enum.min()
-    boxes = Map.get(distances, min)
+  def link(distances), do: link(distances, [])
+  def link([], circuits), do: circuits
+  def link([{_dist, boxes} | rest], circuits) do
     circuits = wire(circuits, boxes, [])
 
-    link(Map.delete(distances, min), n - 1, circuits)
+    link(rest, circuits)
   end
 
   def wire([], boxes, acc), do: [boxes | acc]
@@ -50,14 +48,27 @@ defmodule Day08 do
     end
   end
 
-  def distances([pt | rest]), do: distances(rest, [pt], %{})
-  def distances([], _seen, acc), do: acc
-  def distances([pt | rest], seen, acc) do
-    acc = Stream.cycle([pt])
-    |> Enum.zip(seen)
-    |> Enum.map(fn {p1, p2} -> {Point.distance(p1, p2), MapSet.new([p1, p2])} end)
-    |> Enum.into(acc)
+  def distances(points, n) do
+    {initial, rest} = points |> pairs() |> Enum.split(n)
 
-    distances(rest, [pt | seen], acc)
+    shortest = initial
+    |> Enum.map(fn {p1, p2} -> {Point.distance(p1, p2), MapSet.new([p1, p2])} end)
+    |> Enum.sort_by(fn {dist, _pt} -> dist end, :desc)
+
+    Enum.reduce(rest, shortest, fn {p1, p2}, acc -> insert({Point.distance(p1, p2), MapSet.new([p1, p2])}, acc) end)
+  end
+
+  def insert({dist, _set}, [{max_dist, _set2} | _rest]=shortest) when dist >= max_dist, do: shortest
+  def insert(tuple, [_max_tuple | rest]), do: insert(tuple, rest, [])
+
+  def insert({dist, set}, [], acc), do: Enum.reverse(acc) ++ [{dist, set}]
+  def insert({dist, set}, [{max, _set2} | _rest]=shortest, acc) when dist >= max, do: Enum.reverse(acc) ++ [{dist, set} | shortest]
+  def insert(tuple, [max_tuple | rest], acc), do: insert(tuple, rest, [max_tuple | acc])
+
+  def pairs(list), do: pairs(list, [])
+  def pairs([], acc), do: acc
+  def pairs([pt | rest], acc) do
+    zipped = Stream.cycle([pt]) |> Enum.zip(rest)
+    pairs(rest, acc ++ zipped)
   end
 end
