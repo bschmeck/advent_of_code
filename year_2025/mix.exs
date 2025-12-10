@@ -23,7 +23,8 @@ defmodule Year2025.MixProject do
     [
       {:tesla, "~> 1.4"},
       {:nimble_parsec, "~> 1.4"},
-      {:jason, "~> 1.4"}
+      {:jason, "~> 1.4"},
+      {:heap, "~> 3.0.0"}
     ]
   end
 end

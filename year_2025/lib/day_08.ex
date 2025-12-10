@@ -17,8 +17,8 @@ defmodule Day08 do
 
     input.contents_of(8, :stream)
     |> Enum.map(&Point.parse/1)
-    |> distances(n)
-    |> Enum.reverse()
+    |> distances()
+    |> Enum.take(n)
     |> link()
     |> Enum.map(&MapSet.size/1)
     |> Enum.sort()
@@ -27,8 +27,22 @@ defmodule Day08 do
     |> Enum.reduce(&Kernel.*/2)
   end
 
-  def part_two(_input \\ InputFile) do
+  def part_two(input \\ InputFile) do
+    points = input.contents_of(8, :stream) |> Enum.map(&Point.parse/1)
 
+    points
+    |> distances()
+    |> Enum.to_list()
+    |> link_all(Enum.count(points))
+    |> Enum.map(&(&1.x))
+    |> Enum.reduce(&Kernel.*/2)
+  end
+
+  def link_all(distances, goal), do: link_all(distances, goal, [])
+  def link_all([{_dist, boxes} | rest], goal, circuits) do
+    circuits = wire(circuits, boxes, [])
+
+    if MapSet.size(hd(circuits)) == goal, do: boxes, else: link_all(rest, goal, circuits)
   end
 
   def link(distances), do: link(distances, [])
@@ -48,22 +62,11 @@ defmodule Day08 do
     end
   end
 
-  def distances(points, n) do
-    {initial, rest} = points |> pairs() |> Enum.split(n)
-
-    shortest = initial
-    |> Enum.map(fn {p1, p2} -> {Point.distance(p1, p2), MapSet.new([p1, p2])} end)
-    |> Enum.sort_by(fn {dist, _pt} -> dist end, :desc)
-
-    Enum.reduce(rest, shortest, fn {p1, p2}, acc -> insert({Point.distance(p1, p2), MapSet.new([p1, p2])}, acc) end)
+  def distances(points) do
+    points
+    |> pairs()
+    |> Enum.reduce(Heap.min, fn {p1, p2}, acc -> Heap.push(acc, {Point.distance(p1, p2), MapSet.new([p1, p2])}) end)
   end
-
-  def insert({dist, _set}, [{max_dist, _set2} | _rest]=shortest) when dist >= max_dist, do: shortest
-  def insert(tuple, [_max_tuple | rest]), do: insert(tuple, rest, [])
-
-  def insert({dist, set}, [], acc), do: Enum.reverse(acc) ++ [{dist, set}]
-  def insert({dist, set}, [{max, _set2} | _rest]=shortest, acc) when dist >= max, do: Enum.reverse(acc) ++ [{dist, set} | shortest]
-  def insert(tuple, [max_tuple | rest], acc), do: insert(tuple, rest, [max_tuple | acc])
 
   def pairs(list), do: pairs(list, [])
   def pairs([], acc), do: acc
